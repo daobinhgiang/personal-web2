@@ -21,7 +21,7 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="mb-20">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 text-balance">
-          Hi, I&apos;m <span className="text-blue-600">Your Name</span>
+          Hi, I&apos;m <span className="text-blue-600">Giang Dao</span>
         </h1>
         <p className="text-xl md:text-2xl text-gray-600 mb-8 text-balance">
           A brief tagline about what you do or who you are

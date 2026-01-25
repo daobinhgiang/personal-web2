@@ -17,7 +17,7 @@ export default function Navigation() {
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="text-xl font-bold">
-            Your Name
+            Giang Dao
           </Link>
           <div className="flex gap-8">
             {links.map((link) => (
