@@ -41,7 +41,7 @@ export default async function Home() {
         <h2 className="text-3xl font-bold mb-6">About Me</h2>
         <div className="prose prose-lg max-w-none text-gray-600">
           <p className="mb-4">
-            I'm a interested in the future of technology, particularly AI and biotechnology. Currently advocating for a more open-minded perspective about mental healthcare.
+            I&apos;m a interested in the future of technology, particularly AI and biotechnology. Currently advocating for a more open-minded perspective about mental healthcare.
           </p>
         </div>
       </section>
