@@ -3,7 +3,7 @@ import Link from "next/link";
 async function getRecentPosts() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
-      cache: 'no-store',
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     const data = await response.json();
     return data.success ? data.posts.slice(0, 3) : [];
