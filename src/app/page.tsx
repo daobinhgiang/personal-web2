@@ -21,7 +21,7 @@ export default async function Home() {
       {/* Hero Section */}
       <section className="mb-20">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 text-balance">
-          Hi, I'm <span className="text-blue-600">Your Name</span>
+          Hi, I&apos;m <span className="text-blue-600">Your Name</span>
         </h1>
         <p className="text-xl md:text-2xl text-gray-600 mb-8 text-balance">
           A brief tagline about what you do or who you are
@@ -45,7 +45,7 @@ export default async function Home() {
             What makes you unique?
           </p>
           <p className="mb-4">
-            Share your background, interests, and what you're currently focused on.
+            Share your background, interests, and what you&apos;re currently focused on.
           </p>
           <p>
             This is your space to tell your story in your own words.
