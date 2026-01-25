@@ -18,6 +18,7 @@ export interface SessionData {
   userId: string;
   email: string;
   name: string;
+  [key: string]: unknown;
 }
 
 // Hash password
