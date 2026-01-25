@@ -28,9 +28,6 @@ export default function Contact() {
     <div className="max-w-4xl mx-auto px-6 py-20">
       <div className="mb-12">
         <h1 className="text-5xl font-bold mb-4">Get in Touch</h1>
-        <p className="text-xl text-gray-600">
-          I&apos;d love to hear from you. Send me a message and I&apos;ll respond as soon as possible.
-        </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-12">
@@ -97,29 +94,12 @@ export default function Contact() {
         {/* Contact Information */}
         <div>
           <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Email</h3>
-              <a
-                href="mailto:your.email@example.com"
-                className="text-blue-600 hover:text-blue-700"
-              >
-                your.email@example.com
-              </a>
-            </div>
 
             <div>
               <h3 className="text-lg font-semibold mb-2">Social</h3>
               <div className="space-y-2">
                 <a
-                  href="https://github.com/yourusername"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-blue-600 hover:text-blue-700"
-                >
-                  GitHub
-                </a>
-                <a
-                  href="https://linkedin.com/in/yourusername"
+                  href="https://linkedin.com/in/giang-mdao"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-blue-600 hover:text-blue-700"
@@ -127,7 +107,7 @@ export default function Contact() {
                   LinkedIn
                 </a>
                 <a
-                  href="https://twitter.com/yourusername"
+                  href="https://twitter.com/giangm_mdao"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-blue-600 hover:text-blue-700"
@@ -135,15 +115,6 @@ export default function Contact() {
                   Twitter
                 </a>
               </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Location</h3>
-              <p className="text-gray-600">
-                City, Country
-                <br />
-                Available for remote work
-              </p>
             </div>
           </div>
         </div>

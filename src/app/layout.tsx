@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Giang Dao - Personal Website",
-  description: "Personal website and blog",
+  description: "A personal website and blog",
 };
 
 export default function RootLayout({

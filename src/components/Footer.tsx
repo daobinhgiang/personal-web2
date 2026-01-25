@@ -29,15 +29,7 @@ export default function Footer() {
             <h3 className="font-semibold mb-3">Connect</h3>
             <div className="space-y-2">
               <a
-                href="https://github.com/yourusername"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-gray-600 text-sm hover:text-blue-600"
-              >
-                GitHub
-              </a>
-              <a
-                href="https://linkedin.com/in/yourusername"
+                href="https://linkedin.com/in/giang-mdao"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-gray-600 text-sm hover:text-blue-600"
@@ -45,7 +37,7 @@ export default function Footer() {
                 LinkedIn
               </a>
               <a
-                href="https://twitter.com/yourusername"
+                href="https://twitter.com/giangm_mdao"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-gray-600 text-sm hover:text-blue-600"
@@ -56,7 +48,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="pt-8 border-t border-gray-200 text-center text-gray-600 text-sm">
-          © {currentYear} Your Name. All rights reserved.
+          © {currentYear} Giang Dao. All rights reserved.
         </div>
       </div>
     </footer>

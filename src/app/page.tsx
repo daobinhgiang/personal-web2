@@ -24,7 +24,7 @@ export default async function Home() {
           Hi, I&apos;m <span className="text-blue-600">Giang Dao</span>
         </h1>
         <p className="text-xl md:text-2xl text-gray-600 mb-8 text-balance">
-          A brief tagline about what you do or who you are
+          Technologist and mental health advocate
         </p>
         <div className="flex gap-4">
           <Link
@@ -41,14 +41,7 @@ export default async function Home() {
         <h2 className="text-3xl font-bold mb-6">About Me</h2>
         <div className="prose prose-lg max-w-none text-gray-600">
           <p className="mb-4">
-            Write a brief introduction about yourself. What drives you? What are your passions?
-            What makes you unique?
-          </p>
-          <p className="mb-4">
-            Share your background, interests, and what you&apos;re currently focused on.
-          </p>
-          <p>
-            This is your space to tell your story in your own words.
+            I'm a interested in the future of technology, particularly AI and biotechnology. Currently advocating for a more open-minded perspective about mental healthcare.
           </p>
         </div>
       </section>
@@ -56,9 +49,9 @@ export default async function Home() {
       {/* Recent Blog Posts */}
       <section>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">Recent Posts</h2>
+          <h2 className="text-3xl font-bold">Blogs</h2>
           <Link href="/blog" className="text-blue-600 hover:text-blue-700 font-medium">
-            View all →
+            View all blogs →
           </Link>
         </div>
         {recentPosts.length > 0 ? (
@@ -85,7 +78,7 @@ export default async function Home() {
           </div>
         ) : (
           <div className="text-center py-12 border border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500 mb-4">No posts yet. Create your first post from the admin dashboard!</p>
+            <p className="text-gray-500 mb-4">No blogs yet. Create your first blog from the admin dashboard!</p>
             <Link 
               href="/admin" 
               className="text-blue-600 hover:text-blue-700 font-medium"
