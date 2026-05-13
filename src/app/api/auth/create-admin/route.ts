@@ -8,10 +8,10 @@ import { hashPassword } from '@/lib/auth';
 export async function POST(request: NextRequest) {
   try {
     // Optional: Add a setup secret to protect this endpoint
-    // const { setupSecret } = await request.json();
-    // if (setupSecret !== process.env.SETUP_SECRET) {
-    //   return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    // }
+    const { setupSecret } = await request.json();
+    if (setupSecret !== process.env.SETUP_SECRET) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { email, password, name } = await request.json();
 
