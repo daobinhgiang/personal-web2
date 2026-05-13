@@ -13,7 +13,7 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-sm z-50">
+    <nav className="border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-sm z-50 transition-all duration-300">
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="text-xl font-bold">

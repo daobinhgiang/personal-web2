@@ -1,12 +1,19 @@
 import Link from "next/link";
+import Image from "next/image";
+import JourneyTimeline from "@/components/JourneyTimeline";
+import ThemeTransition from "@/components/ThemeTransition";
+import { getDatabase } from "@/lib/mongodb";
 
 async function getRecentPosts() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/posts`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
-    });
-    const data = await response.json();
-    return data.success ? data.posts.slice(0, 3) : [];
+    const db = await getDatabase();
+    const posts = await db
+      .collection('posts')
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .toArray();
+    return posts;
   } catch (error) {
     console.error('Error fetching posts:', error);
     return [];
@@ -18,36 +25,54 @@ export default async function Home() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-20">
+      <ThemeTransition />
+
       {/* Hero Section */}
-      <section className="mb-20">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-balance">
-          Hi, I&apos;m <span className="text-blue-600">Giang Dao</span>
-        </h1>
-        <p className="text-xl md:text-2xl text-gray-600 mb-8 text-balance">
-          Technologist and mental health advocate
+      <section className="h-screen flex flex-col justify-center -mt-20 pb-20 snap-start">
+        <div className="flex items-center gap-[3vw] mb-[3vh]">
+          <Image
+            src="/profile.jpg"
+            alt="Giang Dao"
+            width={160}
+            height={160}
+            className="rounded-full object-cover w-[clamp(80px,10vw,160px)] h-[clamp(80px,10vw,160px)] ring-2 ring-gray-200"
+            priority
+          />
+          <div>
+            <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-bold text-balance">
+              Giang Dao
+            </h1>
+            <p className="text-[clamp(1rem,2vw,1.5rem)] text-gray-500 mt-2">
+              AI Engineer & Technologist
+            </p>
+          </div>
+        </div>
+        <p className="text-gray-600 text-[clamp(1rem,1.8vw,1.25rem)] max-w-xl mb-[4vh] leading-relaxed">
+          I&apos;m interested in the future of AI.
+          <br /> <br />
+          Currently learning about manufacturing processes and automation.
         </p>
-        <div className="flex gap-4">
+        <div>
           <Link
             href="/contact"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
           >
-            Get in touch
+            Get in touch →
           </Link>
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-6">About Me</h2>
-        <div className="prose prose-lg max-w-none text-gray-600">
-          <p className="mb-4">
-            I&apos;m a interested in the future of technology, particularly AI and biotechnology. Currently advocating for a more open-minded perspective about mental healthcare.
-          </p>
-        </div>
-      </section>
+      {/* Transition zone: hero → dark */}
+      <div id="theme-transition-zone" className="h-[40vh]" />
+
+      {/* Journey Timeline */}
+      <JourneyTimeline />
+
+      {/* Transition zone: dark → light */}
+      <div id="theme-transition-end" className="h-[20vh]" />
 
       {/* Recent Blog Posts */}
-      <section>
+      <section className="snap-start">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold">Blogs</h2>
           <Link href="/blog" className="text-blue-600 hover:text-blue-700 font-medium">
@@ -57,16 +82,16 @@ export default async function Home() {
         {recentPosts.length > 0 ? (
           <div className="space-y-8">
             {recentPosts.map((post: any) => (
-              <article key={post._id} className="border-b border-gray-200 pb-8 last:border-b-0">
+              <article key={post._id.toString()} className="border-b border-gray-200 pb-8 last:border-b-0">
                 <time className="text-sm text-gray-500">
-                  {new Date(post.createdAt).toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  {new Date(post.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                   })}
                 </time>
                 <h3 className="text-xl font-semibold mb-2 mt-1">
-                  <Link href={`/blog/${post._id}`} className="hover:text-blue-600">
+                  <Link href={`/blog/${post._id.toString()}`} className="hover:text-blue-600">
                     {post.title}
                   </Link>
                 </h3>
