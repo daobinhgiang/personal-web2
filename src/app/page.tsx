@@ -29,41 +29,34 @@ export default async function Home() {
 
       {/* Hero Section */}
       <section className="h-screen flex flex-col justify-center -mt-20 pb-20 snap-start">
-        <div className="flex items-center gap-[3vw] mb-[3vh]">
+        <div className="flex items-start justify-between gap-[3vw]">
+          <div>
+            <div className="mb-[3vh]">
+              <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-bold text-balance">
+                Giang Dao
+              </h1>
+              <p className="text-[clamp(1rem,2vw,1.5rem)] text-gray-500 mt-2">
+                AI Engineer & Technologist
+              </p>
+            </div>
+            <p className="text-gray-600 text-[clamp(1rem,1.8vw,1.25rem)] max-w-xl mb-[4vh] leading-relaxed">
+              <br />
+              Currently learning about manufacturing processes and automation.
+            </p>
+          </div>
           <Image
             src="/profile.jpg"
             alt="Giang Dao"
-            width={160}
-            height={160}
-            className="rounded-full object-cover w-[clamp(80px,10vw,160px)] h-[clamp(80px,10vw,160px)] ring-2 ring-gray-200"
+            width={240}
+            height={240}
+            className="rounded-full object-cover w-[clamp(120px,15vw,240px)] h-[clamp(120px,15vw,240px)] ring-2 ring-gray-200 flex-shrink-0"
             priority
           />
-          <div>
-            <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-bold text-balance">
-              Giang Dao
-            </h1>
-            <p className="text-[clamp(1rem,2vw,1.5rem)] text-gray-500 mt-2">
-              AI Engineer & Technologist
-            </p>
-          </div>
-        </div>
-        <p className="text-gray-600 text-[clamp(1rem,1.8vw,1.25rem)] max-w-xl mb-[4vh] leading-relaxed">
-          I&apos;m interested in the future of AI.
-          <br /> <br />
-          Currently learning about manufacturing processes and automation.
-        </p>
-        <div>
-          <Link
-            href="/contact"
-            className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
-          >
-            Get in touch →
-          </Link>
         </div>
       </section>
 
       {/* Transition zone: hero → dark */}
-      <div id="theme-transition-zone" className="h-[40vh]" />
+      <div id="theme-transition-zone" className="h-[40vh] snap-start" />
 
       {/* Journey Timeline */}
       <JourneyTimeline />
