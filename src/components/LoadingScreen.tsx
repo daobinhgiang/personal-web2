@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-const COLUMN_COUNT = 14;
-
 const COLUMNS: { dir: 1 | -1; delay: number; dur: number }[] = [
   { dir: -1, delay: 0.00, dur: 0.55 },
   { dir: -1, delay: 0.02, dur: 0.50 },

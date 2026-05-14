@@ -24,7 +24,7 @@ export default function ThemeTransition() {
       if (!bar) return;
       const lead = RHYTHM[i] ?? 0;
       // Bars with more lead finish sooner (end point is lower on screen)
-      const endY = Math.round(lead * 80); // 0–34% from top
+      const endY = Math.round(lead * 80);
 
       const tween = gsap.to(bar, {
         clipPath: "inset(0% 0% 0% 0%)",
