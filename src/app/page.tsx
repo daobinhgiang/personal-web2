@@ -77,7 +77,8 @@ export default function Home() {
           alt="Giang Dao"
           width={200}
           height={200}
-          className="rounded-3xl object-cover w-[clamp(100px,16vw,240px)] h-[clamp(100px,16vw,240px)] ring-2 ring-gray-700 flex-shrink-0"
+          className="rounded-3xl object-cover w-[clamp(100px,16vw,240px)] h-[clamp(100px,16vw,240px)] flex-shrink-0"
+          style={{ boxShadow: "0 0 20px rgba(255,255,255,0.08), inset 0 0 20px rgba(255,255,255,0.05)" }}
           priority
         />
       </div>

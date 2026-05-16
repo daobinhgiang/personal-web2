@@ -8,6 +8,7 @@ export default function CustomCursor() {
   const iconRef = useRef<HTMLDivElement>(null);
   const rippleRef = useRef<HTMLDivElement>(null);
   const isInteractive = useRef(false);
+  const spinTween = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
     const cursor = cursorRef.current!;
@@ -59,6 +60,25 @@ export default function CustomCursor() {
       });
     };
 
+    const startSpin = () => {
+      if (!spinTween.current) {
+        spinTween.current = gsap.to(icon, {
+          rotation: "+=360",
+          duration: 1.5,
+          repeat: -1,
+          ease: "none",
+        });
+      }
+    };
+
+    const stopSpin = () => {
+      if (spinTween.current) {
+        spinTween.current.kill();
+        spinTween.current = null;
+        gsap.to(icon, { rotation: 0, duration: 0.4, ease: "power2.out" });
+      }
+    };
+
     const handleEnterInteractive = () => {
       isInteractive.current = true;
       gsap.to(cursor, { scale: 1.2, duration: 0.3, ease: "power3.out" });
@@ -67,6 +87,7 @@ export default function CustomCursor() {
         duration: 0.3,
         ease: "power3.out",
       });
+      startSpin();
     };
 
     const handleLeaveInteractive = () => {
@@ -77,6 +98,7 @@ export default function CustomCursor() {
         duration: 0.3,
         ease: "power3.out",
       });
+      stopSpin();
     };
 
     const addInteractiveListeners = () => {
@@ -91,18 +113,33 @@ export default function CustomCursor() {
       return interactives;
     };
 
+    const addSpinListeners = () => {
+      const spinTargets = document.querySelectorAll("[data-cursor-spin]");
+      spinTargets.forEach((el) => {
+        el.addEventListener("mouseenter", startSpin);
+        el.addEventListener("mouseleave", stopSpin);
+      });
+      return spinTargets;
+    };
+
     window.addEventListener("mousemove", moveCursor);
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
 
     let interactives = addInteractiveListeners();
+    let spinTargets = addSpinListeners();
 
     const observer = new MutationObserver(() => {
       interactives.forEach((el) => {
         el.removeEventListener("mouseenter", handleEnterInteractive);
         el.removeEventListener("mouseleave", handleLeaveInteractive);
       });
+      spinTargets.forEach((el) => {
+        el.removeEventListener("mouseenter", startSpin);
+        el.removeEventListener("mouseleave", stopSpin);
+      });
       interactives = addInteractiveListeners();
+      spinTargets = addSpinListeners();
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -116,7 +153,15 @@ export default function CustomCursor() {
         el.removeEventListener("mouseenter", handleEnterInteractive);
         el.removeEventListener("mouseleave", handleLeaveInteractive);
       });
+      spinTargets.forEach((el) => {
+        el.removeEventListener("mouseenter", startSpin);
+        el.removeEventListener("mouseleave", stopSpin);
+      });
       observer.disconnect();
+      if (spinTween.current) {
+        spinTween.current.kill();
+        spinTween.current = null;
+      }
     };
   }, []);
 
