@@ -226,7 +226,7 @@ export default function JourneyTimeline() {
   }, []);
 
   return (
-    <section id="journey-timeline" data-theme="dark" className="relative z-[2] mb-20">
+    <section id="journey-timeline" data-theme="dark" className="relative z-[2] mb-20 pb-40">
       <div ref={timelineRef} className="relative">
         {/* Static gray track */}
         <div className="tl-track absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gray-700" />
@@ -242,7 +242,8 @@ export default function JourneyTimeline() {
           return (
             <div
               key={i}
-              className="min-h-[35vh] flex items-center snap-start cursor-pointer"
+              className="min-h-[35vh] flex items-center snap-start cursor-none"
+              data-cursor-spin
               onClick={() => {
                 const el = itemRefs.current[i];
                 if (!el) return;
