@@ -25,8 +25,8 @@ export default function CustomCursor() {
       });
       // Trailing star follows with delay
       gsap.to(icon, {
-        x: e.clientX + 20,
-        y: e.clientY + 20,
+        x: e.clientX + 30,
+        y: e.clientY + 30,
         duration: 1.4,
         ease: "power4.out",
       });
@@ -34,7 +34,7 @@ export default function CustomCursor() {
 
     const handleMouseDown = (e: MouseEvent) => {
       gsap.to(cursor, { scale: 0.8, duration: 0.1 });
-      gsap.to(icon, { scale: 0.5, rotation: "+=90", duration: 0.1 });
+      gsap.to(icon, { scale: 0.5, duration: 0.1 });
 
       gsap.set(ripple, {
         x: e.clientX,
@@ -64,8 +64,6 @@ export default function CustomCursor() {
       gsap.to(cursor, { scale: 1.2, duration: 0.3, ease: "power3.out" });
       gsap.to(icon, {
         scale: 1.3,
-        rotation: "+=180",
-        borderRadius: "50%",
         duration: 0.3,
         ease: "power3.out",
       });
@@ -76,7 +74,6 @@ export default function CustomCursor() {
       gsap.to(cursor, { scale: 1, duration: 0.3, ease: "power3.out" });
       gsap.to(icon, {
         scale: 1,
-        borderRadius: "0%",
         duration: 0.3,
         ease: "power3.out",
       });
@@ -99,14 +96,6 @@ export default function CustomCursor() {
     window.addEventListener("mouseup", handleMouseUp);
 
     let interactives = addInteractiveListeners();
-
-    // Slow spin on the trailing star
-    gsap.to(icon, {
-      rotation: "+=360",
-      duration: 8,
-      repeat: -1,
-      ease: "none",
-    });
 
     const observer = new MutationObserver(() => {
       interactives.forEach((el) => {
@@ -154,24 +143,26 @@ export default function CustomCursor() {
         </svg>
       </div>
 
-      {/* Trailing star */}
+      {/* Trailing 3D cube */}
       <div
         ref={iconRef}
         className="fixed top-0 left-0 pointer-events-none z-[9999]"
         style={{
-          width: "14px",
-          height: "14px",
-          marginLeft: "-7px",
-          marginTop: "-7px",
-          background: "currentColor",
-          color: "white",
-          clipPath:
-            "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+          marginLeft: "-10px",
+          marginTop: "-10px",
           filter: "drop-shadow(0 0 4px rgba(255,255,255,0.3))",
           mixBlendMode: "difference",
-          transition: "clip-path 0.3s ease, border-radius 0.3s ease",
         }}
-      />
+      >
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none" stroke="white" strokeWidth="1.2" strokeLinejoin="round">
+          {/* Top face */}
+          <path d="M16 4L27 10L16 16L5 10Z" />
+          {/* Left face */}
+          <path d="M5 10L16 16L16 28L5 22Z" />
+          {/* Right face */}
+          <path d="M27 10L16 16L16 28L27 22Z" />
+        </svg>
+      </div>
 
       {/* Ripple */}
       <div

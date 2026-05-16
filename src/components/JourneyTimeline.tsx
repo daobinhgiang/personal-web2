@@ -226,7 +226,7 @@ export default function JourneyTimeline() {
   }, []);
 
   return (
-    <section id="journey-timeline" data-theme="light" className="relative z-[2] mt-32 mb-20">
+    <section id="journey-timeline" data-theme="dark" className="relative z-[2] mb-20">
       <div ref={timelineRef} className="relative">
         {/* Static gray track */}
         <div className="tl-track absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gray-700" />
@@ -281,7 +281,7 @@ export default function JourneyTimeline() {
                     ref={(el) => {
                       dotRefs.current[i] = el;
                     }}
-                    className="tl-dot w-4 h-4 rounded-full bg-blue-500 border-4 shadow-lg ring-2"
+                    className="tl-dot w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0a0a] shadow-lg ring-2 ring-blue-500/30"
                   />
                 </div>
 
@@ -341,7 +341,7 @@ function MilestoneContent({
       href={milestone.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="tl-link hover:text-blue-600 hover:underline transition-colors"
+      className="tl-link hover:text-blue-400 hover:underline transition-colors"
     >
       {milestone.title}
     </a>
@@ -351,7 +351,7 @@ function MilestoneContent({
 
   return (
     <>
-      <span className="tl-pill inline-block text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg mb-3">
+      <span className="tl-pill inline-block text-sm font-semibold text-blue-400 bg-blue-500/15 px-3 py-1 rounded-lg mb-3">
         {milestone.date}
       </span>
       <h3
