@@ -8,24 +8,21 @@ export default function Navigation() {
 
   const links = [
     { href: "/", label: "Home" },
-    { href: "/blog", label: "Blog" },
+    { href: "/my-work", label: "My Work" },
     { href: "/contact", label: "Contact" },
   ];
 
   return (
-    <nav className="border-b border-gray-200 sticky top-0 bg-white/80 backdrop-blur-sm z-50 transition-all duration-300">
-      <div className="max-w-6xl mx-auto px-6 py-4">
-        <div className="flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold">
-            Giang Dao
-          </Link>
-          <div className="flex gap-8">
+    <nav className="sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-sm z-50 transition-all duration-300">
+      <div className="max-w-6xl mx-auto px-8 py-5">
+        <div className="flex justify-center items-center">
+          <div className="flex gap-10 text-lg">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`hover:text-blue-600 transition-colors ${
-                  pathname === link.href ? "text-blue-600 font-medium" : "text-gray-600"
+                className={`hover:text-white hover:scale-110 transition-all duration-300 ease-out ${
+                  pathname === link.href ? "text-white font-medium" : "text-gray-400"
                 }`}
               >
                 {link.label}

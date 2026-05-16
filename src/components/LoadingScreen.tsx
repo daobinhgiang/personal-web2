@@ -3,10 +3,26 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
+const COLUMNS: { dir: 1 | -1; delay: number; dur: number }[] = [
+  { dir: -1, delay: 0.00, dur: 0.55 },
+  { dir: -1, delay: 0.02, dur: 0.50 },
+  { dir:  1, delay: 0.18, dur: 0.65 },
+  { dir: -1, delay: 0.06, dur: 0.40 },
+  { dir:  1, delay: 0.30, dur: 0.50 },
+  { dir:  1, delay: 0.28, dur: 0.55 },
+  { dir: -1, delay: 0.10, dur: 0.70 },
+  { dir:  1, delay: 0.03, dur: 0.45 },
+  { dir: -1, delay: 0.22, dur: 0.50 },
+  { dir:  1, delay: 0.35, dur: 0.60 },
+  { dir: -1, delay: 0.08, dur: 0.45 },
+  { dir: -1, delay: 0.12, dur: 0.55 },
+  { dir:  1, delay: 0.26, dur: 0.40 },
+  { dir:  1, delay: 0.05, dur: 0.50 },
+];
+
 export default function LoadingScreen() {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const topHalfRef = useRef<HTMLDivElement>(null);
-  const bottomHalfRef = useRef<HTMLDivElement>(null);
+  const columnsRef = useRef<(HTMLDivElement | null)[]>([]);
   const nameRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
@@ -16,18 +32,21 @@ export default function LoadingScreen() {
     const tl = gsap.timeline({
       onComplete: () => {
         window.scrollTo({ top: 0, behavior: "instant" });
+        document.body.style.overflow = "";
         setDone(true);
       },
     });
 
-    // Lock scroll during animation
     document.body.style.overflow = "hidden";
 
     const letters = nameRef.current?.querySelectorAll(".letter");
     const subtitleWords = subtitleRef.current?.querySelectorAll(".word");
 
+    gsap.set(nameRef.current!, { visibility: "visible" });
+    gsap.set(lineRef.current!, { visibility: "visible" });
+    gsap.set(subtitleRef.current!, { visibility: "visible" });
+
     tl
-      // Letters stagger in from below with rotation
       .from(letters!, {
         y: 80,
         opacity: 0,
@@ -36,13 +55,11 @@ export default function LoadingScreen() {
         duration: 0.7,
         ease: "back.out(1.7)",
       })
-      // Horizontal line sweeps across
       .from(lineRef.current!, {
         scaleX: 0,
         duration: 0.6,
         ease: "power3.inOut",
       }, "-=0.2")
-      // Subtitle words fade in
       .from(subtitleWords!, {
         y: 20,
         opacity: 0,
@@ -50,34 +67,13 @@ export default function LoadingScreen() {
         duration: 0.4,
         ease: "power2.out",
       }, "-=0.3")
-      // Hold for a beat
       .to({}, { duration: 0.4 })
-      // Split the overlay open like curtains
-      .to(topHalfRef.current!, {
+      // Pull up out of view
+      .to(overlayRef.current!, {
         yPercent: -100,
         duration: 0.8,
-        ease: "power4.inOut",
-      })
-      .to(bottomHalfRef.current!, {
-        yPercent: 100,
-        duration: 0.8,
-        ease: "power4.inOut",
-      }, "<")
-      // Fade out the text simultaneously
-      .to(nameRef.current!, {
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.4,
-        ease: "power2.in",
-      }, "<")
-      .to(lineRef.current!, {
-        opacity: 0,
-        duration: 0.3,
-      }, "<")
-      .to(subtitleRef.current!, {
-        opacity: 0,
-        duration: 0.3,
-      }, "<");
+        ease: "power3.inOut",
+      });
 
     return () => {
       document.body.style.overflow = "";
@@ -85,32 +81,29 @@ export default function LoadingScreen() {
     };
   }, []);
 
-  if (done) {
-    document.body.style.overflow = "";
-    return null;
-  }
+  if (done) return null;
 
   const name = "Giang Dao";
 
   return (
-    <div ref={overlayRef} className="fixed inset-0 z-[100] pointer-events-none">
-      {/* Top half */}
-      <div
-        ref={topHalfRef}
-        className="absolute top-0 left-0 right-0 h-1/2 bg-gray-950"
-      />
-      {/* Bottom half */}
-      <div
-        ref={bottomHalfRef}
-        className="absolute bottom-0 left-0 right-0 h-1/2 bg-gray-950"
-      />
+    <div ref={overlayRef} className="loading-overlay fixed inset-0 z-[100] pointer-events-none">
+      {/* Column strips */}
+      <div className="absolute inset-0 flex">
+        {COLUMNS.map((_, i) => (
+          <div
+            key={i}
+            ref={(el) => { columnsRef.current[i] = el; }}
+            className="bg-[#0a0a0a] flex-1 h-full"
+          />
+        ))}
+      </div>
 
       {/* Centered content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
         <div
           ref={nameRef}
-          className="text-[clamp(2.5rem,8vw,5rem)] font-bold text-white tracking-tight"
-          style={{ perspective: "600px" }}
+          className="text-[clamp(2.5rem,8vw,5rem)] font-bold text-gray-100 tracking-tight"
+          style={{ perspective: "600px", visibility: "hidden" }}
         >
           {name.split("").map((char, i) => (
             <span
@@ -124,9 +117,10 @@ export default function LoadingScreen() {
         </div>
         <div
           ref={lineRef}
-          className="w-24 h-[2px] bg-blue-500 mt-4 mb-4 origin-left"
+          className="w-24 h-[1px] bg-gray-600 mt-4 mb-4 origin-left"
+          style={{ visibility: "hidden" }}
         />
-        <div ref={subtitleRef} className="text-gray-400 text-[clamp(0.875rem,2vw,1.125rem)] tracking-widest uppercase">
+        <div ref={subtitleRef} className="text-gray-500 text-[clamp(0.875rem,2vw,1.125rem)] tracking-widest uppercase" style={{ visibility: "hidden" }}>
           {"AI Engineer & Technologist".split(" ").map((word, i) => (
             <span key={i} className="word inline-block mx-1">
               {word}
