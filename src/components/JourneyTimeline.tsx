@@ -229,7 +229,7 @@ export default function JourneyTimeline() {
     <section id="journey-timeline" data-theme="light" className="relative z-[2] mt-32 mb-20">
       <div ref={timelineRef} className="relative">
         {/* Static gray track */}
-        <div className="tl-track absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gray-200" />
+        <div className="tl-track absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gray-700" />
         {/* Animated blue line */}
         <div
           ref={lineRef}
@@ -351,18 +351,18 @@ function MilestoneContent({
 
   return (
     <>
-      <span className="tl-pill inline-block text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-3">
+      <span className="tl-pill inline-block text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg mb-3">
         {milestone.date}
       </span>
       <h3
         className={`tl-title ${
           small ? "text-lg" : "text-xl"
-        } font-bold mb-2 text-gray-900`}
+        } font-bold mb-2 text-gray-100`}
       >
         {title}
       </h3>
       <p
-        className={`tl-desc text-gray-600 leading-relaxed ${small ? "text-sm" : ""}`}
+        className={`tl-desc text-gray-400 leading-relaxed ${small ? "text-sm" : ""}`}
       >
         {milestone.description}
       </p>
@@ -373,7 +373,7 @@ function MilestoneContent({
             alt={milestone.title}
             width={280}
             height={210}
-            className={`tl-img rounded-lg shadow-sm ${
+            className={`tl-img shadow-sm rounded-2xl ${
               small ? "max-w-[200px]" : "max-w-[280px]"
             } h-auto`}
           />

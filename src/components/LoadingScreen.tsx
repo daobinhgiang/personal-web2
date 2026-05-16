@@ -68,25 +68,12 @@ export default function LoadingScreen() {
         ease: "power2.out",
       }, "-=0.3")
       .to({}, { duration: 0.4 })
-      // Fade out text
-      .to([nameRef.current!, lineRef.current!, subtitleRef.current!], {
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.3,
-        ease: "power2.in",
-      })
-      .addLabel("scatter");
-
-    // Scatter columns with chaotic independent timing
-    columnsRef.current.forEach((col, i) => {
-      if (!col) return;
-      const { dir, delay, dur } = COLUMNS[i];
-      tl.to(col, {
-        yPercent: dir > 0 ? -120 : 120,
-        duration: dur,
-        ease: "power4.inOut",
-      }, `scatter+=${delay}`);
-    });
+      // Pull up out of view
+      .to(overlayRef.current!, {
+        yPercent: -100,
+        duration: 0.8,
+        ease: "power3.inOut",
+      });
 
     return () => {
       document.body.style.overflow = "";
@@ -106,7 +93,7 @@ export default function LoadingScreen() {
           <div
             key={i}
             ref={(el) => { columnsRef.current[i] = el; }}
-            className="bg-gray-950 flex-1 h-full"
+            className="bg-[#0a0a0a] flex-1 h-full"
           />
         ))}
       </div>
@@ -115,7 +102,7 @@ export default function LoadingScreen() {
       <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
         <div
           ref={nameRef}
-          className="text-[clamp(2.5rem,8vw,5rem)] font-bold text-white tracking-tight"
+          className="text-[clamp(2.5rem,8vw,5rem)] font-bold text-gray-100 tracking-tight"
           style={{ perspective: "600px", visibility: "hidden" }}
         >
           {name.split("").map((char, i) => (
@@ -130,10 +117,10 @@ export default function LoadingScreen() {
         </div>
         <div
           ref={lineRef}
-          className="w-24 h-[2px] bg-blue-500 mt-4 mb-4 origin-left"
+          className="w-24 h-[1px] bg-gray-600 mt-4 mb-4 origin-left"
           style={{ visibility: "hidden" }}
         />
-        <div ref={subtitleRef} className="text-gray-400 text-[clamp(0.875rem,2vw,1.125rem)] tracking-widest uppercase" style={{ visibility: "hidden" }}>
+        <div ref={subtitleRef} className="text-gray-500 text-[clamp(0.875rem,2vw,1.125rem)] tracking-widest uppercase" style={{ visibility: "hidden" }}>
           {"AI Engineer & Technologist".split(" ").map((word, i) => (
             <span key={i} className="word inline-block mx-1">
               {word}
