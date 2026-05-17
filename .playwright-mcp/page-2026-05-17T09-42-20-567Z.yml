@@ -1,0 +1,55 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e5]:
+        - link "Devouring Details" [ref=e6] [cursor=pointer]:
+          - /url: https://www.devouringdetails.com
+          - generic [ref=e7]: Devouring Details
+          - heading [level=3] [ref=e10]: DD
+        - link "Craft" [ref=e12] [cursor=pointer]:
+          - /url: /craft
+          - generic [ref=e13]: Craft
+          - heading [level=3] [ref=e16]: Craft
+        - link "History of Software Design" [ref=e17] [cursor=pointer]:
+          - /url: https://historyofsoftware.org
+          - generic [ref=e18]: History of Software Design
+          - img [ref=e21]
+        - link "Projects" [ref=e23] [cursor=pointer]:
+          - /url: /projects
+          - generic [ref=e24]: Projects
+          - heading "Projects" [level=3] [ref=e28]
+        - link "Field Notes" [ref=e29] [cursor=pointer]:
+          - /url: /notes/1
+          - generic [ref=e30]: Field Notes
+          - img [ref=e33]
+        - generic [ref=e58]:
+          - link "Twitter" [ref=e59] [cursor=pointer]:
+            - /url: https://twitter.com/raunofreiberg
+          - link "2023" [ref=e60] [cursor=pointer]:
+            - /url: https://2023.rauno.me
+          - link "2022" [ref=e61] [cursor=pointer]:
+            - /url: https://2022.rauno.me
+          - link "GitHub" [ref=e62] [cursor=pointer]:
+            - /url: https://github.com/raunofreiberg
+          - button "Copy email" [ref=e63]:
+            - generic [ref=e64]:
+              - paragraph [ref=e65]: Email
+              - paragraph [ref=e66]: Copied
+          - region [ref=e67]
+        - paragraph [ref=e71]:
+          - text: Make it fast.
+          - text: Make it beautiful.
+          - text: Make it consistent.
+          - text: Make it carefully.
+          - text: Make it timeless.
+          - text: Make it soulful.
+          - text: Make it.
+      - img [ref=e72] [cursor=pointer]
+    - generic [ref=e75]:
+      - link:
+        - /url: /
+      - link:
+        - /url: /craft
+      - link:
+        - /url: /projects
+  - alert [ref=e96]
