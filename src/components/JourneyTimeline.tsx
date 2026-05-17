@@ -24,7 +24,7 @@ const milestones: Milestone[] = [
     title: "First Hackathon Win",
     description:
       "Won my very first hackathon, sparking a passion for building under pressure and collaborating with talented people.",
-    image: "/timeline/hackathon-win.jpg",
+    image: "/timeline/hackathon-win.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
   {
@@ -32,7 +32,7 @@ const milestones: Milestone[] = [
     title: "Won TAMUHack X",
     description:
       "Competed at TAMUHack X and took home a win, solidifying my love for hackathons and rapid prototyping.",
-    image: "/timeline/tamuhack.jpg",
+    image: "/timeline/tamuhack.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
   {
@@ -40,7 +40,7 @@ const milestones: Milestone[] = [
     title: "AWS Certified Cloud Practitioner",
     description:
       "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
-    image: "/timeline/aws-cert.jpg",
+    image: "/timeline/aws-cert.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
   {
@@ -60,7 +60,7 @@ const milestones: Milestone[] = [
     title: "First CodeCoogs Talk",
     description:
       "Gave my first talk as a CodeCoogs officer, sharing knowledge and stepping into a leadership role in the developer community.",
-    image: "/timeline/codecoogs-talk.jpg",
+    image: "/timeline/codecoogs-talk.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
   {
@@ -68,14 +68,14 @@ const milestones: Milestone[] = [
     title: "Young AI Leader — AI for Good",
     description:
       "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
-    image: "/timeline/ai-for-good.jpg",
+    image: "/timeline/ai-for-good.svg",
   },
   {
     date: "Mar 2025",
     title: "Harvard Rare Diseases Hackathon",
     description:
       "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
-    image: "/timeline/harvard-hackathon.jpg",
+    image: "/timeline/harvard-hackathon.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
   {
@@ -107,7 +107,7 @@ const milestones: Milestone[] = [
     title: "2nd Place — Rice AI in Health Conference",
     description:
       "Won 2nd place at the AI in Health Conference at Rice University, presenting innovative AI applications in healthcare.",
-    image: "/timeline/rice-ai-health.jpg",
+    image: "/timeline/rice-ai-health.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
   {
@@ -121,7 +121,7 @@ const milestones: Milestone[] = [
     title: "Met Peter Steinberger in Vienna",
     description:
       "Traveled to Vienna and met Peter Steinberger, connecting with one of the most influential figures in mobile development.",
-    image: "/timeline/vienna-peter.jpg",
+    image: "/timeline/vienna-peter.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
   },
 ];
@@ -144,18 +144,28 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
   const stripRef = useRef<HTMLDivElement>(null);
   const labelsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const isAnimating = useRef(false);
   const currentIndexRef = useRef(0);
   const vwRef = useRef(0);
-  const wheelAccum = useRef(0);
-  const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Keep currentIndexRef in sync
-  useEffect(() => {
-    currentIndexRef.current = activeIndex;
-  }, [activeIndex]);
+  // Scroll-driven state
+  const targetProgress = useRef(0);   // raw target from wheel input (0–1 per transition)
+  const smoothProgress = useRef(0);   // lerped display value
+  const directionRef = useRef(1);     // 1 = forward, -1 = backward
+  /** After a slide commits, mute wheel briefly. Fixed deadline (never extended by momentum). */
+  const WHEEL_MUTE_AFTER_SLIDE_MS = 140;
+  const wheelMutedUntilRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
 
-  // Measure container width
+  // GSAP animation lock (for click nav)
+  const isAnimating = useRef(false);
+
+  // Scroll amount needed per slide transition (in wheel delta px)
+  const SCROLL_PER_SLIDE = 600;
+  // Below this, treat scroll transition as idle (eligible to flip neighbour direction).
+  const PROG_EPS = 1e-5;
+  // Lerp factor — lower = smoother/more inertia
+  const LERP = 0.08;
+
   useEffect(() => {
     const update = () => {
       vwRef.current = containerRef.current?.offsetWidth ?? window.innerWidth;
@@ -171,18 +181,14 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
       if (!strip) return;
       const vw = containerRef.current?.offsetWidth ?? vwRef.current;
 
-      // Base translateX centers slideIdx in viewport
       const baseTx = -(slideIdx * vw);
-      // Pan interpolation toward targetIdx
       const targetTx = -(targetIdx * vw);
       const tx = baseTx + (targetTx - baseTx) * panProgress;
 
-      // Transform origin: keep scale centered on viewport center
       const originX = vw / 2 - tx;
       strip.style.transformOrigin = `${originX}px 50%`;
       strip.style.transform = `translateX(${tx}px) scale(${scale})`;
 
-      // Labels: visible when zoomed out
       const labelOpacity = 1 - (scale - SCALE_OUT) / (SCALE_IN - SCALE_OUT);
       const clampedOpacity = Math.max(0, Math.min(1, labelOpacity));
       labelsRef.current.forEach((label) => {
@@ -192,49 +198,193 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
     []
   );
 
+  // Map progress (0–1) through 3 phases and apply transform
+  const applyProgress = useCallback(
+    (progress: number, fromIdx: number, dir: number) => {
+      const toIdx = fromIdx + dir;
+      if (toIdx < 0 || toIdx >= milestones.length) return;
+
+      // Ease the progress for a more natural feel
+      const p = progress;
+
+      if (p <= 0.3) {
+        // Phase 1: Zoom out
+        const t = p / 0.3;
+        const scale = SCALE_IN + (SCALE_OUT - SCALE_IN) * t;
+        applyTransform(fromIdx, scale, 0, fromIdx);
+      } else if (p <= 0.7) {
+        // Phase 2: Pan
+        const t = (p - 0.3) / 0.4;
+        applyTransform(fromIdx, SCALE_OUT, t, toIdx);
+      } else {
+        // Phase 3: Zoom in
+        const t = (p - 0.7) / 0.3;
+        const scale = SCALE_OUT + (SCALE_IN - SCALE_OUT) * t;
+        applyTransform(toIdx, scale, 0, toIdx);
+      }
+    },
+    [applyTransform]
+  );
+
   // Set initial transform
   useEffect(() => {
     applyTransform(0, SCALE_IN, 0, 0);
   }, [applyTransform]);
 
-  // 3-phase GSAP animation: zoom out → pan → zoom in (one slide at a time)
+  // rAF render loop — smoothly interpolates toward target
+  useEffect(() => {
+    const tick = () => {
+      if (isAnimating.current) {
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+
+      const tgt = targetProgress.current;
+      const prevS = smoothProgress.current;
+      const diff = tgt - prevS;
+
+      // Lerp
+      if (Math.abs(diff) > 0.001) {
+        smoothProgress.current = prevS + diff * LERP;
+      } else {
+        smoothProgress.current = tgt;
+      }
+
+      const p = smoothProgress.current;
+      const idx = currentIndexRef.current;
+      const dir = directionRef.current;
+      const nextIdx = idx + dir;
+
+      // Only render if there's meaningful progress
+      if (Math.abs(p) > 0.001 && nextIdx >= 0 && nextIdx < milestones.length) {
+        applyProgress(Math.abs(p), idx, dir);
+
+        // Update active index at halfway
+        if (Math.abs(p) > 0.5) {
+          setActiveIndex(nextIdx);
+        } else {
+          setActiveIndex(idx);
+        }
+      }
+
+      // Completed transition — snap to next slide
+      if (tgt >= 1 && smoothProgress.current >= 0.995) {
+        const nextI = idx + dir;
+        if (nextI >= 0 && nextI < milestones.length) {
+          currentIndexRef.current = nextI;
+          setActiveIndex(nextI);
+          applyTransform(nextI, SCALE_IN, 0, nextI);
+          wheelMutedUntilRef.current = performance.now() + WHEEL_MUTE_AFTER_SLIDE_MS;
+        }
+        targetProgress.current = 0;
+        smoothProgress.current = 0;
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [applyProgress, applyTransform]);
+
+  // Wheel input — feeds targetProgress
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isAnimating.current) return;
+
+      const now = performance.now();
+      if (now < wheelMutedUntilRef.current) return;
+
+      const delta = e.deltaY;
+      const tentative = delta > 0 ? 1 : -1;
+      const committed = currentIndexRef.current;
+      const step = Math.abs(delta) / SCROLL_PER_SLIDE;
+      const tgtAtStart = targetProgress.current;
+
+      // --- Opposing scroll while mid-transition: shrink progress smoothly (reverse along same path).
+      // --- Idle + opposing: start transitioning toward neighbour in tentative direction.
+
+      if (tentative !== directionRef.current) {
+        const curMag = Math.max(targetProgress.current, smoothProgress.current);
+
+        if (curMag <= PROG_EPS) {
+          const toward = committed + tentative;
+          if (toward < 0 || toward >= milestones.length) return;
+
+          directionRef.current = tentative;
+          const s0 = Math.min(1, step);
+          targetProgress.current = s0;
+          smoothProgress.current = s0;
+        } else {
+          const nw = Math.max(0, curMag - step);
+          targetProgress.current = nw;
+          smoothProgress.current = nw;
+
+          if (nw <= PROG_EPS) {
+            targetProgress.current = 0;
+            smoothProgress.current = 0;
+            applyTransform(committed, SCALE_IN, 0, committed);
+            setActiveIndex(committed);
+          }
+        }
+      } else {
+        const toward = committed + directionRef.current;
+        if (toward < 0 || toward >= milestones.length) return;
+
+        targetProgress.current = Math.min(1, tgtAtStart + step);
+      }
+    };
+
+    container.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      container.removeEventListener("wheel", onWheel);
+    };
+  }, [applyTransform]);
+
+  // Snappy GSAP animation for progress bar clicks
   const animateToSlide = useCallback(
     (from: number, to: number) => {
       if (from === to || isAnimating.current) return;
       isAnimating.current = true;
+      // Reset scroll state
+      targetProgress.current = 0;
+      smoothProgress.current = 0;
 
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimating.current = false;
-          wheelAccum.current = 0;
           currentIndexRef.current = to;
           setActiveIndex(to);
           applyTransform(to, SCALE_IN, 0, to);
+          wheelMutedUntilRef.current = performance.now() + WHEEL_MUTE_AFTER_SLIDE_MS;
         },
       });
 
       const state = { scale: SCALE_IN, pan: 0 };
 
-      // Phase 1: Zoom out
       tl.to(state, {
         scale: SCALE_OUT,
-        duration: 0.4,
+        duration: 0.25,
         ease: "power2.inOut",
         onUpdate: () => applyTransform(from, state.scale, 0, from),
       });
 
-      // Phase 2: Pan to next slide
       tl.to(state, {
         pan: 1,
-        duration: 0.45,
+        duration: 0.2,
         ease: "power2.inOut",
         onUpdate: () => applyTransform(from, SCALE_OUT, state.pan, to),
       });
 
-      // Phase 3: Zoom back in on the new slide
       tl.to(state, {
         scale: SCALE_IN,
-        duration: 0.4,
+        duration: 0.25,
         ease: "power2.inOut",
         onUpdate: () => applyTransform(to, state.scale, 0, to),
       });
@@ -244,11 +394,12 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
 
   const goToSlide = useCallback(
     (index: number) => {
-      if (isAnimating.current || index === activeIndex) return;
+      const committed = currentIndexRef.current;
+      if (isAnimating.current || index === committed) return;
       if (index < 0 || index >= milestones.length) return;
-      animateToSlide(activeIndex, index);
+      animateToSlide(committed, index);
     },
-    [activeIndex, animateToSlide]
+    [animateToSlide]
   );
 
   // Expose goToSlide to parent
@@ -260,41 +411,6 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
   useEffect(() => {
     onSlideChange?.(activeIndex);
   }, [activeIndex, onSlideChange]);
-
-  // Wheel: accumulate small deltas, trigger ONE slide transition once threshold is met
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const THRESHOLD = 80;
-
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (isAnimating.current) return;
-
-      wheelAccum.current += e.deltaY;
-
-      // Clear accumulator after a pause (prevents stale momentum)
-      if (wheelTimer.current) clearTimeout(wheelTimer.current);
-      wheelTimer.current = setTimeout(() => {
-        wheelAccum.current = 0;
-      }, 150);
-
-      if (Math.abs(wheelAccum.current) >= THRESHOLD) {
-        const direction = wheelAccum.current > 0 ? 1 : -1;
-        const from = currentIndexRef.current;
-        const to = from + direction;
-        wheelAccum.current = 0;
-
-        if (to >= 0 && to < milestones.length) {
-          animateToSlide(from, to);
-        }
-      }
-    };
-
-    container.addEventListener("wheel", onWheel, { passive: false });
-    return () => container.removeEventListener("wheel", onWheel);
-  }, [animateToSlide]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -408,6 +524,7 @@ function SlideContent({
             alt={milestone.title}
             width={500}
             height={350}
+            unoptimized
             className="rounded-2xl shadow-lg max-w-full h-auto max-h-[35vh] object-cover"
           />
         </div>
