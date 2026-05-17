@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface Milestone {
   date: string;
@@ -127,222 +126,254 @@ const milestones: Milestone[] = [
   },
 ];
 
-export default function JourneyTimeline() {
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const lineRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
+const SCALE_IN = 1;
+const SCALE_OUT = 0.35;
 
+export { milestones };
+
+interface JourneyTimelineProps {
+  onSlideChange?: (index: number) => void;
+  onGoToSlide?: (fn: (index: number) => void) => void;
+}
+
+// Re-export milestones count for progress bar
+export const MILESTONES_COUNT = milestones.length;
+
+export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyTimelineProps = {}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const labelsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const isAnimating = useRef(false);
+  const currentIndexRef = useRef(0);
+  const vwRef = useRef(0);
+  const wheelAccum = useRef(0);
+  const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep currentIndexRef in sync
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    currentIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
-    const timeline = timelineRef.current;
-    const line = lineRef.current;
-    if (!timeline || !line) return;
-
-    // Line draws from top to bottom via clipPath
-    gsap.set(line, { clipPath: "inset(0 0 100% 0)" });
-
-    const lineTween = gsap.to(line, {
-      clipPath: "inset(0 0 0% 0)",
-      ease: "none",
-      scrollTrigger: {
-        trigger: timeline,
-        start: "top center",
-        end: "bottom center",
-        scrub: true,
-      },
-    });
-
-    // Blur/focus: only the item closest to viewport center is sharp
-    let activeIndex = -1;
-
-    itemRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const dot = dotRefs.current[i];
-      gsap.set(el, { filter: "blur(6px)", opacity: 0.15 });
-      if (dot) gsap.set(dot, { scale: 0.5, opacity: 0.3 });
-    });
-
-    function updateFocus() {
-      const center = window.innerHeight / 2;
-      let closest = -1;
-      let closestDist = Infinity;
-
-      itemRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const elCenter = rect.top + rect.height / 2;
-        const dist = Math.abs(elCenter - center);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closest = i;
-        }
-      });
-
-      // Require the new item to be significantly closer before switching
-      if (closest !== activeIndex) {
-        if (activeIndex >= 0) {
-          const currEl = itemRefs.current[activeIndex];
-          if (currEl) {
-            const currRect = currEl.getBoundingClientRect();
-            const currDist = Math.abs(currRect.top + currRect.height / 2 - center);
-            // Only switch if new item is at least 30% closer (hysteresis)
-            if (closestDist > currDist * 0.2) return;
-          }
-        }
-        // Blur previous
-        if (activeIndex >= 0) {
-          const prev = itemRefs.current[activeIndex];
-          const prevDot = dotRefs.current[activeIndex];
-          if (prev) snapTo(prev, prevDot, false);
-        }
-        // Focus new
-        activeIndex = closest;
-        if (activeIndex >= 0) {
-          const curr = itemRefs.current[activeIndex];
-          const currDot = dotRefs.current[activeIndex];
-          if (curr) snapTo(curr, currDot, true);
-        }
-      }
-    }
-
-    // Run on scroll via ScrollTrigger
-    const focusTrigger = ScrollTrigger.create({
-      trigger: timeline,
-      start: "top bottom",
-      end: "bottom top",
-      onUpdate: updateFocus,
-    });
-
-    // Initial check
-    updateFocus();
-
-    return () => {
-      lineTween.scrollTrigger?.kill();
-      lineTween.kill();
-      focusTrigger.kill();
+  // Measure container width
+  useEffect(() => {
+    const update = () => {
+      vwRef.current = containerRef.current?.offsetWidth ?? window.innerWidth;
     };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
+  const applyTransform = useCallback(
+    (slideIdx: number, scale: number, panProgress: number, targetIdx: number) => {
+      const strip = stripRef.current;
+      if (!strip) return;
+      const vw = containerRef.current?.offsetWidth ?? vwRef.current;
+
+      // Base translateX centers slideIdx in viewport
+      const baseTx = -(slideIdx * vw);
+      // Pan interpolation toward targetIdx
+      const targetTx = -(targetIdx * vw);
+      const tx = baseTx + (targetTx - baseTx) * panProgress;
+
+      // Transform origin: keep scale centered on viewport center
+      const originX = vw / 2 - tx;
+      strip.style.transformOrigin = `${originX}px 50%`;
+      strip.style.transform = `translateX(${tx}px) scale(${scale})`;
+
+      // Labels: visible when zoomed out
+      const labelOpacity = 1 - (scale - SCALE_OUT) / (SCALE_IN - SCALE_OUT);
+      const clampedOpacity = Math.max(0, Math.min(1, labelOpacity));
+      labelsRef.current.forEach((label) => {
+        if (label) label.style.opacity = String(clampedOpacity);
+      });
+    },
+    []
+  );
+
+  // Set initial transform
+  useEffect(() => {
+    applyTransform(0, SCALE_IN, 0, 0);
+  }, [applyTransform]);
+
+  // 3-phase GSAP animation: zoom out → pan → zoom in (one slide at a time)
+  const animateToSlide = useCallback(
+    (from: number, to: number) => {
+      if (from === to || isAnimating.current) return;
+      isAnimating.current = true;
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          isAnimating.current = false;
+          wheelAccum.current = 0;
+          currentIndexRef.current = to;
+          setActiveIndex(to);
+          applyTransform(to, SCALE_IN, 0, to);
+        },
+      });
+
+      const state = { scale: SCALE_IN, pan: 0 };
+
+      // Phase 1: Zoom out
+      tl.to(state, {
+        scale: SCALE_OUT,
+        duration: 0.4,
+        ease: "power2.inOut",
+        onUpdate: () => applyTransform(from, state.scale, 0, from),
+      });
+
+      // Phase 2: Pan to next slide
+      tl.to(state, {
+        pan: 1,
+        duration: 0.45,
+        ease: "power2.inOut",
+        onUpdate: () => applyTransform(from, SCALE_OUT, state.pan, to),
+      });
+
+      // Phase 3: Zoom back in on the new slide
+      tl.to(state, {
+        scale: SCALE_IN,
+        duration: 0.4,
+        ease: "power2.inOut",
+        onUpdate: () => applyTransform(to, state.scale, 0, to),
+      });
+    },
+    [applyTransform]
+  );
+
+  const goToSlide = useCallback(
+    (index: number) => {
+      if (isAnimating.current || index === activeIndex) return;
+      if (index < 0 || index >= milestones.length) return;
+      animateToSlide(activeIndex, index);
+    },
+    [activeIndex, animateToSlide]
+  );
+
+  // Expose goToSlide to parent
+  useEffect(() => {
+    onGoToSlide?.(goToSlide);
+  }, [goToSlide, onGoToSlide]);
+
+  // Notify parent of slide changes
+  useEffect(() => {
+    onSlideChange?.(activeIndex);
+  }, [activeIndex, onSlideChange]);
+
+  // Wheel: accumulate small deltas, trigger ONE slide transition once threshold is met
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const THRESHOLD = 80;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (isAnimating.current) return;
+
+      wheelAccum.current += e.deltaY;
+
+      // Clear accumulator after a pause (prevents stale momentum)
+      if (wheelTimer.current) clearTimeout(wheelTimer.current);
+      wheelTimer.current = setTimeout(() => {
+        wheelAccum.current = 0;
+      }, 150);
+
+      if (Math.abs(wheelAccum.current) >= THRESHOLD) {
+        const direction = wheelAccum.current > 0 ? 1 : -1;
+        const from = currentIndexRef.current;
+        const to = from + direction;
+        wheelAccum.current = 0;
+
+        if (to >= 0 && to < milestones.length) {
+          animateToSlide(from, to);
+        }
+      }
+    };
+
+    container.addEventListener("wheel", onWheel, { passive: false });
+    return () => container.removeEventListener("wheel", onWheel);
+  }, [animateToSlide]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (isAnimating.current) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        e.preventDefault();
+        const next = currentIndexRef.current + 1;
+        if (next < milestones.length)
+          animateToSlide(currentIndexRef.current, next);
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const prev = currentIndexRef.current - 1;
+        if (prev >= 0) animateToSlide(currentIndexRef.current, prev);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [animateToSlide]);
+
   return (
-    <section id="journey-timeline" data-theme="dark" className="relative z-[2] mb-20 pb-40">
-      <div ref={timelineRef} className="relative">
-        {/* Static gray track */}
-        <div className="tl-track absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gray-700" />
-        {/* Animated blue line */}
-        <div
-          ref={lineRef}
-          className="absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-blue-500 to-violet-500"
-        />
-
-        {milestones.map((milestone, i) => {
-          const isLeft = i % 2 === 0;
-
-          return (
+    <div
+      ref={containerRef}
+      className="relative w-full h-full overflow-hidden"
+    >
+      {/* Horizontal strip */}
+      <div
+        ref={stripRef}
+        className="flex h-full"
+        style={{ width: `${milestones.length * 100}%`, willChange: "transform" }}
+      >
+        {milestones.map((milestone, i) => (
+          <div
+            key={i}
+            className="relative flex-shrink-0 flex flex-col justify-center"
+            style={{ width: `${100 / milestones.length}%`, height: "100%", padding: "clamp(2rem, 3vw, 3.5rem)" }}
+          >
+            {/* Label above slide - visible when zoomed out */}
             <div
-              key={i}
-              className="min-h-[35vh] flex items-center snap-start cursor-none"
-              data-cursor-spin
-              onClick={() => {
-                const el = itemRefs.current[i];
-                if (!el) return;
-                const rect = el.getBoundingClientRect();
-                const elCenter = rect.top + rect.height / 2;
-                const viewCenter = window.innerHeight / 2;
-                window.scrollBy({
-                  top: elCenter - viewCenter,
-                  behavior: "smooth",
-                });
-              }}
+              ref={(el) => { labelsRef.current[i] = el; }}
+              className="absolute top-6 left-1/2 -translate-x-1/2 text-center pointer-events-none z-10"
+              style={{ opacity: 0 }}
             >
-              <div className="relative flex items-start md:items-center w-full">
-                {/* Desktop left side */}
-                <div
-                  className="hidden md:block w-[calc(50%-24px)]"
-                >
-                  <div
-                    ref={(el) => {
-                      if (isLeft) itemRefs.current[i] = el;
-                    }}
-                    className="text-right pr-8"
-                  >
-                    {isLeft && (
-                      <MilestoneContent
-                        milestone={milestone}
-                        align="right"
-                      />
-                    )}
-                  </div>
-                </div>
-
-                {/* Center dot */}
-                <div className="flex-shrink-0 md:mx-0 mr-4 z-10">
-                  <div
-                    ref={(el) => {
-                      dotRefs.current[i] = el;
-                    }}
-                    className="tl-dot w-4 h-4 rounded-full bg-blue-500 border-4 border-[#0a0a0a] shadow-lg ring-2 ring-blue-500/30"
-                  />
-                </div>
-
-                {/* Desktop right side */}
-                <div
-                  className="hidden md:block w-[calc(50%-24px)]"
-                >
-                  <div
-                    ref={(el) => {
-                      if (!isLeft) itemRefs.current[i] = el;
-                    }}
-                    className="text-left pl-8"
-                  >
-                    {!isLeft && (
-                      <MilestoneContent
-                        milestone={milestone}
-                        align="left"
-                      />
-                    )}
-                  </div>
-                </div>
-
-                {/* Mobile */}
-                <div
-                  ref={(el) => {
-                    if (
-                      typeof window !== "undefined" &&
-                      window.innerWidth < 768
-                    ) {
-                      itemRefs.current[i] = el;
-                    }
-                  }}
-                  className="md:hidden flex-1"
-                >
-                  <MilestoneContent milestone={milestone} small align="left" />
-                </div>
+              <div className="text-blue-400 text-xs font-semibold tracking-wide mb-1">
+                {milestone.date}
+              </div>
+              <div className="text-gray-300 text-sm font-medium whitespace-nowrap max-w-[90vw] truncate">
+                {milestone.title}
               </div>
             </div>
-          );
-        })}
+
+            <SlideContent
+              milestone={milestone}
+              index={i}
+              total={milestones.length}
+            />
+          </div>
+        ))}
       </div>
-    </section>
+
+    </div>
   );
 }
 
-function MilestoneContent({
+function SlideContent({
   milestone,
-  small,
-  align = "left",
+  index,
+  total,
 }: {
   milestone: Milestone;
-  small?: boolean;
-  align?: "left" | "right";
+  index: number;
+  total: number;
 }) {
   const title = milestone.link ? (
     <a
       href={milestone.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="tl-link hover:text-blue-400 hover:underline transition-colors"
+      className="hover:text-blue-400 hover:underline transition-colors"
     >
       {milestone.title}
     </a>
@@ -351,56 +382,36 @@ function MilestoneContent({
   );
 
   return (
-    <>
-      <span className="tl-pill inline-block text-sm font-semibold text-blue-400 bg-blue-500/15 px-3 py-1 rounded-lg mb-3">
-        {milestone.date}
-      </span>
-      <h3
-        className={`tl-title ${
-          small ? "text-lg" : "text-xl"
-        } font-bold mb-2 text-gray-100`}
-      >
+    <div className="h-full flex flex-col justify-center max-w-3xl">
+      <div className="flex items-center gap-4 mb-6">
+        <span className="inline-block text-sm font-semibold text-blue-400 bg-blue-500/15 px-4 py-1.5 rounded-lg">
+          {milestone.date}
+        </span>
+        <span className="text-gray-600 text-sm font-mono">
+          {String(index + 1).padStart(2, "0")} /{" "}
+          {String(total).padStart(2, "0")}
+        </span>
+      </div>
+
+      <h2 className="text-3xl md:text-5xl font-bold text-gray-100 mb-4 leading-tight">
         {title}
-      </h3>
-      <p
-        className={`tl-desc text-gray-400 leading-relaxed ${small ? "text-sm" : ""}`}
-      >
+      </h2>
+
+      <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl mb-6">
         {milestone.description}
       </p>
+
       {milestone.image && (
-        <div className={`mt-3 ${align === "right" ? "ml-auto" : ""}`}>
+        <div className="mt-2">
           <Image
             src={milestone.image}
             alt={milestone.title}
-            width={280}
-            height={210}
-            className={`tl-img shadow-sm rounded-2xl ${
-              small ? "max-w-[200px]" : "max-w-[280px]"
-            } h-auto`}
+            width={500}
+            height={350}
+            className="rounded-2xl shadow-lg max-w-full h-auto max-h-[35vh] object-cover"
           />
         </div>
       )}
-    </>
+    </div>
   );
-}
-
-function snapTo(
-  el: HTMLDivElement,
-  dot: HTMLDivElement | null,
-  inView: boolean
-) {
-  gsap.to(el, {
-    filter: inView ? "blur(0px)" : "blur(6px)",
-    opacity: inView ? 1 : 0.15,
-    duration: inView ? 0.8 : 0.6,
-    ease: inView ? "power3.out" : "power3.in",
-  });
-  if (dot) {
-    gsap.to(dot, {
-      scale: inView ? 1 : 0.5,
-      opacity: inView ? 1 : 0.3,
-      duration: inView ? 0.6 : 0.4,
-      ease: inView ? "back.out(2)" : "power3.in",
-    });
-  }
 }

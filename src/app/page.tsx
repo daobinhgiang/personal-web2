@@ -1,11 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import dynamic from "next/dynamic";
+import { useState, useRef } from "react";
+
+const MyWorkOverlay = dynamic(() => import("@/components/MyWorkOverlay"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [copied, setCopied] = useState(false);
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  const [triggerRect, setTriggerRect] = useState<DOMRect | null>(null);
+  const myWorkBtnRef = useRef<HTMLButtonElement>(null);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("giangdao.gmd@gmail.com");
@@ -25,7 +32,15 @@ export default function Home() {
             </p>
           </div>
           <p className="text-gray-400 text-[clamp(1rem,1.5vw,1.5rem)] max-w-[40vw] leading-relaxed">
-            Currently learning about manufacturing optimization and automation.
+            Currently learning about manufacturing optimization and automation{" "}
+            <a
+              href="https://www.linkedin.com/company/gnl-vina"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:scale-105 inline-block transition-transform duration-300 ease-out"
+            >
+              @ GNL VINA
+            </a>
           </p>
           <div className="flex items-center gap-[1.5vw] mt-[2.5vw] opacity-65 blur-[0.3px]">
             <a
@@ -64,12 +79,18 @@ export default function Home() {
                 </span>
               )}
             </button>
-            <Link
-              href="/my-work"
-              className="text-gray-500 hover:text-gray-300 hover:scale-110 transition-all duration-300 ease-out text-[clamp(0.875rem,1.2vw,1.125rem)] font-medium border border-gray-700 px-[1.5vw] py-[0.6vw] rounded-xl"
+            <button
+              ref={myWorkBtnRef}
+              onClick={() => {
+                if (myWorkBtnRef.current) {
+                  setTriggerRect(myWorkBtnRef.current.getBoundingClientRect());
+                }
+                setOverlayOpen(true);
+              }}
+              className="text-gray-500 hover:text-gray-300 hover:scale-110 hover:border-white transition-all duration-300 ease-out text-[clamp(0.875rem,1.2vw,1.125rem)] font-medium border border-gray-700 px-[1.5vw] py-[0.6vw] rounded-xl"
             >
               My Work
-            </Link>
+            </button>
           </div>
         </div>
         <Image
@@ -82,6 +103,11 @@ export default function Home() {
           priority
         />
       </div>
+      <MyWorkOverlay
+        isOpen={overlayOpen}
+        onClose={() => setOverlayOpen(false)}
+        triggerRect={triggerRect}
+      />
     </div>
   );
 }
