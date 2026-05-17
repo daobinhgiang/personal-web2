@@ -2,39 +2,35 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import gsap from "gsap";
 
-interface Milestone {
+export type MilestoneCategory = "work" | "research" | "hackathon" | "leadership" | "sidequest";
+
+export interface Milestone {
   date: string;
   title: string;
   description: string;
   image?: string;
   link?: string;
+  category: MilestoneCategory;
 }
 
 const milestones: Milestone[] = [
+  // --- Work Experience ---
   {
-    date: "Aug 2023",
-    title: "Joined University of Houston",
+    date: "Jun 2025",
+    title: "AI Intern at ETC Technology System",
     description:
-      "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
+      "Joined ETC Technology System as an AI intern, gaining hands-on industry experience building AI-powered solutions.",
+    category: "work",
   },
   {
-    date: "Jan 2024",
-    title: "First Hackathon Win",
+    date: "Jan 2026",
+    title: "Joined The Residency",
     description:
-      "Won my very first hackathon, sparking a passion for building under pressure and collaborating with talented people.",
-    image: "/timeline/hackathon-win.svg",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
+      "Accepted into The Residency (backed by Sam Altman), a highly selective program with less than 1% acceptance rate.",
+    category: "work",
   },
-  {
-    date: "Jan 2024",
-    title: "Won TAMUHack X",
-    description:
-      "Competed at TAMUHack X and took home a win, solidifying my love for hackathons and rapid prototyping.",
-    image: "/timeline/tamuhack.svg",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
-  },
+  // --- Research & Certification ---
   {
     date: "Apr 2024",
     title: "AWS Certified Cloud Practitioner",
@@ -42,26 +38,7 @@ const milestones: Milestone[] = [
       "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
     image: "/timeline/aws-cert.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
-  },
-  {
-    date: "Sep 2024",
-    title: "Founded Ping Pong @ UH",
-    description:
-      "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
-  },
-  {
-    date: "Jan 2025",
-    title: "Switched to CS & Joined CodeCoogs",
-    description:
-      "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
-  },
-  {
-    date: "Feb 2025",
-    title: "First CodeCoogs Talk",
-    description:
-      "Gave my first talk as a CodeCoogs officer, sharing knowledge and stepping into a leadership role in the developer community.",
-    image: "/timeline/codecoogs-talk.svg",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "research",
   },
   {
     date: "Mar 2025",
@@ -69,38 +46,14 @@ const milestones: Milestone[] = [
     description:
       "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
     image: "/timeline/ai-for-good.svg",
-  },
-  {
-    date: "Mar 2025",
-    title: "Harvard Rare Diseases Hackathon",
-    description:
-      "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
-    image: "/timeline/harvard-hackathon.svg",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "research",
   },
   {
     date: "May 2025",
     title: "AI Depression Research at HPE",
     description:
       "Presented original AI depression research at the HPE competition, exploring the intersection of AI and mental health.",
-  },
-  {
-    date: "May 2025",
-    title: "CodeCoogs VP of Operations",
-    description:
-      "Promoted to VP of Operations at CodeCoogs, scaling the organization and driving new initiatives for the developer community.",
-  },
-  {
-    date: "Jun 2025",
-    title: "AI Intern at ETC Technology System",
-    description:
-      "Joined ETC Technology System as an AI intern, gaining hands-on industry experience building AI-powered solutions.",
-  },
-  {
-    date: "Oct 2025",
-    title: "CodeCoogs President",
-    description:
-      "Elected as President of CodeCoogs, leading one of UH's largest developer communities and shaping its future direction.",
+    category: "research",
   },
   {
     date: "Oct 2025",
@@ -109,12 +62,81 @@ const milestones: Milestone[] = [
       "Won 2nd place at the AI in Health Conference at Rice University, presenting innovative AI applications in healthcare.",
     image: "/timeline/rice-ai-health.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "research",
+  },
+  // --- Hackathon ---
+  {
+    date: "Jan 2024",
+    title: "First Hackathon Win",
+    description:
+      "Won my very first hackathon, sparking a passion for building under pressure and collaborating with talented people.",
+    image: "/timeline/hackathon-win.svg",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "hackathon",
   },
   {
-    date: "Jan 2026",
-    title: "Joined The Residency",
+    date: "Jan 2024",
+    title: "Won TAMUHack X",
     description:
-      "Accepted into The Residency (backed by Sam Altman), a highly selective program with less than 1% acceptance rate.",
+      "Competed at TAMUHack X and took home a win, solidifying my love for hackathons and rapid prototyping.",
+    image: "/timeline/tamuhack.svg",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "hackathon",
+  },
+  {
+    date: "Mar 2025",
+    title: "Harvard Rare Diseases Hackathon",
+    description:
+      "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
+    image: "/timeline/harvard-hackathon.svg",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "hackathon",
+  },
+  // --- Leadership ---
+  {
+    date: "Sep 2024",
+    title: "Founded Ping Pong @ UH",
+    description:
+      "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
+    category: "leadership",
+  },
+  {
+    date: "Jan 2025",
+    title: "Switched to CS & Joined CodeCoogs",
+    description:
+      "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
+    category: "leadership",
+  },
+  {
+    date: "Feb 2025",
+    title: "First CodeCoogs Talk",
+    description:
+      "Gave my first talk as a CodeCoogs officer, sharing knowledge and stepping into a leadership role in the developer community.",
+    image: "/timeline/codecoogs-talk.svg",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "leadership",
+  },
+  {
+    date: "May 2025",
+    title: "CodeCoogs VP of Operations",
+    description:
+      "Promoted to VP of Operations at CodeCoogs, scaling the organization and driving new initiatives for the developer community.",
+    category: "leadership",
+  },
+  {
+    date: "Oct 2025",
+    title: "CodeCoogs President",
+    description:
+      "Elected as President of CodeCoogs, leading one of UH's largest developer communities and shaping its future direction.",
+    category: "leadership",
+  },
+  // --- Side-quest ---
+  {
+    date: "Aug 2023",
+    title: "Joined University of Houston",
+    description:
+      "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
+    category: "sidequest",
   },
   {
     date: "Feb 2026",
@@ -123,11 +145,9 @@ const milestones: Milestone[] = [
       "Traveled to Vienna and met Peter Steinberger, connecting with one of the most influential figures in mobile development.",
     image: "/timeline/vienna-peter.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "sidequest",
   },
 ];
-
-const SCALE_IN = 1;
-const SCALE_OUT = 0.35;
 
 export { milestones };
 
@@ -139,145 +159,103 @@ interface JourneyTimelineProps {
 // Re-export milestones count for progress bar
 export const MILESTONES_COUNT = milestones.length;
 
+// Card dimensions — wide landscape cards, ~3.5 visible
+const CARD_WIDTH_RATIO = 0.30; // each card ~30% of container width
+const CARD_HEIGHT_RATIO = 0.32; // card height ~32% of container height → clearly landscape
+const CARD_GAP = 28; // px gap between cards
+const CARD_PADDING_LEFT = 20; // px left padding for first card
+
 export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyTimelineProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
-  const labelsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const currentIndexRef = useRef(0);
-  const vwRef = useRef(0);
+  const containerW = useRef(0);
+  const containerH = useRef(0);
 
-  // Scroll-driven state
-  const targetProgress = useRef(0);   // raw target from wheel input (0–1 per transition)
-  const smoothProgress = useRef(0);   // lerped display value
-  const directionRef = useRef(1);     // 1 = forward, -1 = backward
-  /** After a slide commits, mute wheel briefly. Fixed deadline (never extended by momentum). */
-  const WHEEL_MUTE_AFTER_SLIDE_MS = 140;
-  const wheelMutedUntilRef = useRef(0);
+  // Smooth scroll state
+  const targetX = useRef(0);
+  const currentX = useRef(0);
   const rafRef = useRef<number | null>(null);
 
-  // GSAP animation lock (for click nav)
   const isAnimating = useRef(false);
 
-  // Scroll amount needed per slide transition (in wheel delta px)
-  const SCROLL_PER_SLIDE = 600;
-  // Below this, treat scroll transition as idle (eligible to flip neighbour direction).
-  const PROG_EPS = 1e-5;
-  // Lerp factor — lower = smoother/more inertia
-  const LERP = 0.08;
+  const LERP = 0.1;
+  const SCROLL_SPEED = 1.2; // multiplier for wheel delta
+
+  // Compute card width in px
+  const getCardWidth = useCallback(() => containerW.current * CARD_WIDTH_RATIO, []);
+
+  // Total strip width
+  const getStripWidth = useCallback(() => {
+    const cw = getCardWidth();
+    return CARD_PADDING_LEFT + milestones.length * cw + (milestones.length - 1) * CARD_GAP;
+  }, [getCardWidth]);
+
+  // Get the x offset to place card at given index near the left of the viewport
+  const getScrollX = useCallback((index: number) => {
+    const cw = getCardWidth();
+    return -(index * (cw + CARD_GAP));
+  }, [getCardWidth]);
+
+  // Get the x offset to center a card in the viewport
+  const getCenteredX = useCallback((index: number) => {
+    const cw = getCardWidth();
+    const cardLeft = CARD_PADDING_LEFT + index * (cw + CARD_GAP);
+    const cardCenter = cardLeft + cw / 2;
+    return -(cardCenter - containerW.current / 2);
+  }, [getCardWidth]);
 
   useEffect(() => {
     const update = () => {
-      vwRef.current = containerRef.current?.offsetWidth ?? window.innerWidth;
+      const el = containerRef.current;
+      if (!el) return;
+      containerW.current = el.offsetWidth;
+      containerH.current = el.offsetHeight;
     };
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  const applyTransform = useCallback(
-    (slideIdx: number, scale: number, panProgress: number, targetIdx: number) => {
-      const strip = stripRef.current;
-      if (!strip) return;
-      const vw = containerRef.current?.offsetWidth ?? vwRef.current;
+  // Apply translateX
+  const applyPosition = useCallback((x: number) => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    strip.style.transform = `translateX(${x}px)`;
+  }, []);
 
-      const baseTx = -(slideIdx * vw);
-      const targetTx = -(targetIdx * vw);
-      const tx = baseTx + (targetTx - baseTx) * panProgress;
-
-      const originX = vw / 2 - tx;
-      strip.style.transformOrigin = `${originX}px 50%`;
-      strip.style.transform = `translateX(${tx}px) scale(${scale})`;
-
-      const labelOpacity = 1 - (scale - SCALE_OUT) / (SCALE_IN - SCALE_OUT);
-      const clampedOpacity = Math.max(0, Math.min(1, labelOpacity));
-      labelsRef.current.forEach((label) => {
-        if (label) label.style.opacity = String(clampedOpacity);
-      });
-    },
-    []
-  );
-
-  // Map progress (0–1) through 3 phases and apply transform
-  const applyProgress = useCallback(
-    (progress: number, fromIdx: number, dir: number) => {
-      const toIdx = fromIdx + dir;
-      if (toIdx < 0 || toIdx >= milestones.length) return;
-
-      // Ease the progress for a more natural feel
-      const p = progress;
-
-      if (p <= 0.3) {
-        // Phase 1: Zoom out
-        const t = p / 0.3;
-        const scale = SCALE_IN + (SCALE_OUT - SCALE_IN) * t;
-        applyTransform(fromIdx, scale, 0, fromIdx);
-      } else if (p <= 0.7) {
-        // Phase 2: Pan
-        const t = (p - 0.3) / 0.4;
-        applyTransform(fromIdx, SCALE_OUT, t, toIdx);
-      } else {
-        // Phase 3: Zoom in
-        const t = (p - 0.7) / 0.3;
-        const scale = SCALE_OUT + (SCALE_IN - SCALE_OUT) * t;
-        applyTransform(toIdx, scale, 0, toIdx);
-      }
-    },
-    [applyTransform]
-  );
-
-  // Set initial transform
+  // Set initial position (start from left)
   useEffect(() => {
-    applyTransform(0, SCALE_IN, 0, 0);
-  }, [applyTransform]);
+    targetX.current = 0;
+    currentX.current = 0;
+    applyPosition(0);
+  }, [applyPosition]);
 
-  // rAF render loop — smoothly interpolates toward target
+  // rAF render loop
   useEffect(() => {
     const tick = () => {
-      if (isAnimating.current) {
-        rafRef.current = requestAnimationFrame(tick);
-        return;
-      }
+      const diff = targetX.current - currentX.current;
 
-      const tgt = targetProgress.current;
-      const prevS = smoothProgress.current;
-      const diff = tgt - prevS;
-
-      // Lerp
-      if (Math.abs(diff) > 0.001) {
-        smoothProgress.current = prevS + diff * LERP;
+      if (Math.abs(diff) > 0.5) {
+        currentX.current += diff * LERP;
       } else {
-        smoothProgress.current = tgt;
+        currentX.current = targetX.current;
       }
 
-      const p = smoothProgress.current;
-      const idx = currentIndexRef.current;
-      const dir = directionRef.current;
-      const nextIdx = idx + dir;
+      applyPosition(currentX.current);
 
-      // Only render if there's meaningful progress
-      if (Math.abs(p) > 0.001 && nextIdx >= 0 && nextIdx < milestones.length) {
-        applyProgress(Math.abs(p), idx, dir);
-
-        // Update active index at halfway
-        if (Math.abs(p) > 0.5) {
-          setActiveIndex(nextIdx);
-        } else {
-          setActiveIndex(idx);
+      // Update active index: find card closest to center
+      const cw = getCardWidth();
+      if (cw > 0) {
+        const centerWorld = -currentX.current + containerW.current / 2;
+        const idx = Math.round((centerWorld - CARD_PADDING_LEFT - cw / 2) / (cw + CARD_GAP));
+        const clamped = Math.max(0, Math.min(milestones.length - 1, idx));
+        if (clamped !== currentIndexRef.current) {
+          currentIndexRef.current = clamped;
+          setActiveIndex(clamped);
         }
-      }
-
-      // Completed transition — snap to next slide
-      if (tgt >= 1 && smoothProgress.current >= 0.995) {
-        const nextI = idx + dir;
-        if (nextI >= 0 && nextI < milestones.length) {
-          currentIndexRef.current = nextI;
-          setActiveIndex(nextI);
-          applyTransform(nextI, SCALE_IN, 0, nextI);
-          wheelMutedUntilRef.current = performance.now() + WHEEL_MUTE_AFTER_SLIDE_MS;
-        }
-        targetProgress.current = 0;
-        smoothProgress.current = 0;
       }
 
       rafRef.current = requestAnimationFrame(tick);
@@ -287,9 +265,17 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [applyProgress, applyTransform]);
+  }, [applyPosition, getCardWidth]);
 
-  // Wheel input — feeds targetProgress
+  // Clamp target within bounds
+  const clampTarget = useCallback((x: number) => {
+    const cw = getCardWidth();
+    const totalWidth = CARD_PADDING_LEFT + milestones.length * cw + (milestones.length - 1) * CARD_GAP;
+    const minX = -(totalWidth - containerW.current);
+    return Math.max(minX, Math.min(0, x));
+  }, [getCardWidth]);
+
+  // Wheel input — continuous linear scroll
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -298,108 +284,31 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
       e.preventDefault();
       if (isAnimating.current) return;
 
-      const now = performance.now();
-      if (now < wheelMutedUntilRef.current) return;
-
-      const delta = e.deltaY;
-      const tentative = delta > 0 ? 1 : -1;
-      const committed = currentIndexRef.current;
-      const step = Math.abs(delta) / SCROLL_PER_SLIDE;
-      const tgtAtStart = targetProgress.current;
-
-      // --- Opposing scroll while mid-transition: shrink progress smoothly (reverse along same path).
-      // --- Idle + opposing: start transitioning toward neighbour in tentative direction.
-
-      if (tentative !== directionRef.current) {
-        const curMag = Math.max(targetProgress.current, smoothProgress.current);
-
-        if (curMag <= PROG_EPS) {
-          const toward = committed + tentative;
-          if (toward < 0 || toward >= milestones.length) return;
-
-          directionRef.current = tentative;
-          const s0 = Math.min(1, step);
-          targetProgress.current = s0;
-          smoothProgress.current = s0;
-        } else {
-          const nw = Math.max(0, curMag - step);
-          targetProgress.current = nw;
-          smoothProgress.current = nw;
-
-          if (nw <= PROG_EPS) {
-            targetProgress.current = 0;
-            smoothProgress.current = 0;
-            applyTransform(committed, SCALE_IN, 0, committed);
-            setActiveIndex(committed);
-          }
-        }
-      } else {
-        const toward = committed + directionRef.current;
-        if (toward < 0 || toward >= milestones.length) return;
-
-        targetProgress.current = Math.min(1, tgtAtStart + step);
+      // Dismiss focused card on scroll — unfocus and start scrolling in one motion
+      if (focusedIndex !== null) {
+        setFocusedIndex(null);
       }
+
+      const delta = e.deltaY * SCROLL_SPEED;
+      targetX.current = clampTarget(targetX.current - delta);
     };
 
     container.addEventListener("wheel", onWheel, { passive: false });
-    return () => {
-      container.removeEventListener("wheel", onWheel);
-    };
-  }, [applyTransform]);
+    return () => container.removeEventListener("wheel", onWheel);
+  }, [focusedIndex, clampTarget]);
 
-  // Snappy GSAP animation for progress bar clicks
-  const animateToSlide = useCallback(
-    (from: number, to: number) => {
-      if (from === to || isAnimating.current) return;
-      isAnimating.current = true;
-      // Reset scroll state
-      targetProgress.current = 0;
-      smoothProgress.current = 0;
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          isAnimating.current = false;
-          currentIndexRef.current = to;
-          setActiveIndex(to);
-          applyTransform(to, SCALE_IN, 0, to);
-          wheelMutedUntilRef.current = performance.now() + WHEEL_MUTE_AFTER_SLIDE_MS;
-        },
-      });
-
-      const state = { scale: SCALE_IN, pan: 0 };
-
-      tl.to(state, {
-        scale: SCALE_OUT,
-        duration: 0.25,
-        ease: "power2.inOut",
-        onUpdate: () => applyTransform(from, state.scale, 0, from),
-      });
-
-      tl.to(state, {
-        pan: 1,
-        duration: 0.2,
-        ease: "power2.inOut",
-        onUpdate: () => applyTransform(from, SCALE_OUT, state.pan, to),
-      });
-
-      tl.to(state, {
-        scale: SCALE_IN,
-        duration: 0.25,
-        ease: "power2.inOut",
-        onUpdate: () => applyTransform(to, state.scale, 0, to),
-      });
-    },
-    [applyTransform]
-  );
-
+  // Navigate to slide (for category nav clicks)
   const goToSlide = useCallback(
     (index: number) => {
-      const committed = currentIndexRef.current;
-      if (isAnimating.current || index === committed) return;
+      if (isAnimating.current) return;
       if (index < 0 || index >= milestones.length) return;
-      animateToSlide(committed, index);
+      if (focusedIndex !== null) setFocusedIndex(null);
+
+      targetX.current = getScrollX(index);
+      currentIndexRef.current = index;
+      setActiveIndex(index);
     },
-    [animateToSlide]
+    [focusedIndex, getScrollX]
   );
 
   // Expose goToSlide to parent
@@ -412,77 +321,107 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
     onSlideChange?.(activeIndex);
   }, [activeIndex, onSlideChange]);
 
+  // Handle slide tap to zoom in / out
+  const handleSlideTap = useCallback((index: number) => {
+    if (focusedIndex === index) {
+      setFocusedIndex(null);
+    } else {
+      setFocusedIndex(index);
+      targetX.current = getCenteredX(index);
+      currentIndexRef.current = index;
+      setActiveIndex(index);
+    }
+  }, [focusedIndex, getCenteredX]);
+
   // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (isAnimating.current) return;
+
+      if (e.key === "Escape" && focusedIndex !== null) {
+        setFocusedIndex(null);
+        return;
+      }
+
+      if (focusedIndex !== null) return;
+
       if (e.key === "ArrowDown" || e.key === "ArrowRight") {
         e.preventDefault();
         const next = currentIndexRef.current + 1;
-        if (next < milestones.length)
-          animateToSlide(currentIndexRef.current, next);
+        if (next < milestones.length) goToSlide(next);
       } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
         e.preventDefault();
         const prev = currentIndexRef.current - 1;
-        if (prev >= 0) animateToSlide(currentIndexRef.current, prev);
+        if (prev >= 0) goToSlide(prev);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [animateToSlide]);
+  }, [goToSlide, focusedIndex]);
+
+  const [cardWidthPx, setCardWidthPx] = useState(0);
+
+  // Keep cardWidthPx in sync with container size
+  useEffect(() => {
+    const update = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      setCardWidthPx(el.offsetWidth * CARD_WIDTH_RATIO);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden"
+      className="relative w-full h-full overflow-hidden flex items-center"
     >
-      {/* Horizontal strip */}
+      {/* Horizontal strip of cards */}
       <div
         ref={stripRef}
-        className="flex h-full"
-        style={{ width: `${milestones.length * 100}%`, willChange: "transform" }}
+        className="flex items-center"
+        style={{
+          gap: `${CARD_GAP}px`,
+          paddingLeft: `${CARD_PADDING_LEFT}px`,
+          height: "100%",
+          willChange: "transform",
+        }}
       >
-        {milestones.map((milestone, i) => (
-          <div
-            key={i}
-            className="relative flex-shrink-0 flex flex-col justify-center"
-            style={{ width: `${100 / milestones.length}%`, height: "100%", padding: "clamp(2rem, 3vw, 3.5rem)" }}
-          >
-            {/* Label above slide - visible when zoomed out */}
+        {milestones.map((milestone, i) => {
+          const isFocused = focusedIndex === i;
+          return (
             <div
-              ref={(el) => { labelsRef.current[i] = el; }}
-              className="absolute top-6 left-1/2 -translate-x-1/2 text-center pointer-events-none z-10"
-              style={{ opacity: 0 }}
+              key={i}
+              className="relative flex-shrink-0 rounded-2xl bg-[#141414] border border-gray-800/60 cursor-pointer overflow-hidden"
+              style={{
+                width: `${cardWidthPx}px`,
+                height: `${CARD_HEIGHT_RATIO * 100}%`,
+                transform: isFocused ? "scale(1.15)" : "scale(1)",
+                transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease",
+                zIndex: isFocused ? 10 : 1,
+                boxShadow: isFocused ? "0 0 40px rgba(59,130,246,0.15)" : "none",
+              }}
+              onClick={() => handleSlideTap(i)}
             >
-              <div className="text-blue-400 text-xs font-semibold tracking-wide mb-1">
-                {milestone.date}
-              </div>
-              <div className="text-gray-300 text-sm font-medium whitespace-nowrap max-w-[90vw] truncate">
-                {milestone.title}
+              <div className="h-full flex flex-col justify-center px-5 md:px-6 py-2.5 md:py-3">
+                <SlideContent milestone={milestone} isFocused={isFocused} />
               </div>
             </div>
-
-            <SlideContent
-              milestone={milestone}
-              index={i}
-              total={milestones.length}
-            />
-          </div>
-        ))}
+          );
+        })}
       </div>
-
     </div>
   );
 }
 
 function SlideContent({
   milestone,
-  index,
-  total,
+  isFocused,
 }: {
   milestone: Milestone;
-  index: number;
-  total: number;
+  isFocused: boolean;
 }) {
   const title = milestone.link ? (
     <a
@@ -490,6 +429,7 @@ function SlideContent({
       target="_blank"
       rel="noopener noreferrer"
       className="hover:text-blue-400 hover:underline transition-colors"
+      onClick={(e) => e.stopPropagation()}
     >
       {milestone.title}
     </a>
@@ -498,37 +438,41 @@ function SlideContent({
   );
 
   return (
-    <div className="h-full flex flex-col justify-center max-w-3xl">
-      <div className="flex items-center gap-4 mb-6">
-        <span className="inline-block text-sm font-semibold text-blue-400 bg-blue-500/15 px-4 py-1.5 rounded-lg">
+    <div className="flex flex-col justify-center h-full overflow-hidden">
+      <div className="mb-3">
+        <span className="inline-block text-xs font-semibold text-blue-400 bg-blue-500/15 px-3 py-1 rounded-md">
           {milestone.date}
-        </span>
-        <span className="text-gray-600 text-sm font-mono">
-          {String(index + 1).padStart(2, "0")} /{" "}
-          {String(total).padStart(2, "0")}
         </span>
       </div>
 
-      <h2 className="text-3xl md:text-5xl font-bold text-gray-100 mb-4 leading-tight">
+      <h2 className="text-lg md:text-xl font-bold text-gray-100 leading-tight">
         {title}
       </h2>
 
-      <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-2xl mb-6">
-        {milestone.description}
-      </p>
+      {/* Description & image only visible when focused */}
+      <div
+        className="overflow-hidden transition-all duration-500 ease-out"
+        style={{
+          maxHeight: isFocused ? "400px" : "0px",
+          opacity: isFocused ? 1 : 0,
+          marginTop: isFocused ? "12px" : "0px",
+        }}
+      >
+        <p className="text-gray-400 text-sm leading-relaxed mb-3">
+          {milestone.description}
+        </p>
 
-      {milestone.image && (
-        <div className="mt-2">
+        {milestone.image && (
           <Image
             src={milestone.image}
             alt={milestone.title}
-            width={500}
-            height={350}
+            width={400}
+            height={200}
             unoptimized
-            className="rounded-2xl shadow-lg max-w-full h-auto max-h-[35vh] object-cover"
+            className="rounded-lg shadow-lg max-w-full h-auto max-h-[20vh] object-cover"
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

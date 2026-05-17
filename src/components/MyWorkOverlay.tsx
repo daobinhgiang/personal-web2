@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
-import JourneyTimeline, { milestones } from "./JourneyTimeline";
+import JourneyTimeline, { milestones, MilestoneCategory } from "./JourneyTimeline";
+import CategoryNav from "./CategoryNav";
 
 interface MyWorkOverlayProps {
   isOpen: boolean;
@@ -10,8 +11,9 @@ interface MyWorkOverlayProps {
   triggerRect: DOMRect | null;
 }
 
-// Card padding — larger bottom to leave room for the progress bar
-const PAD = { top: 40, right: 64, bottom: 120, left: 64 };
+// Card-like overlay with padding from screen edges
+const PAD = { top: 40, right: 48, bottom: 40, left: 48 };
+const NAV_WIDTH = "clamp(120px, 10vw, 180px)";
 const BORDER_RADIUS = 16;
 
 function getInsetFromRect(rect: DOMRect) {
@@ -23,6 +25,27 @@ function getInsetFromRect(rect: DOMRect) {
   };
 }
 
+/** Left inset for clip-path: nav width + 20px gap */
+function getLeftInset() {
+  const vw = window.innerWidth;
+  const navW = Math.min(180, Math.max(120, vw * 0.10));
+  return navW + 20;
+}
+
+// Compute the first milestone index for each category
+const categoryStartIndices: Record<MilestoneCategory, number> = (() => {
+  const result = {} as Record<MilestoneCategory, number>;
+  for (let i = 0; i < milestones.length; i++) {
+    const cat = milestones[i].category;
+    if (!(cat in result)) result[cat] = i;
+  }
+  return result;
+})();
+
+function getCategoryForIndex(index: number): MilestoneCategory {
+  return milestones[index].category;
+}
+
 export default function MyWorkOverlay({
   isOpen,
   onClose,
@@ -30,10 +53,9 @@ export default function MyWorkOverlay({
 }: MyWorkOverlayProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const borderRef = useRef<HTMLDivElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
   const isAnimating = useRef(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const goToSlideRef = useRef<(index: number) => void>(() => {});
+  const [activeCategory, setActiveCategory] = useState<MilestoneCategory>("work");
+  const goToSlideRef = useRef<((index: number) => void) | null>(null);
 
   const handleClose = useCallback(() => {
     if (isAnimating.current) return;
@@ -41,7 +63,6 @@ export default function MyWorkOverlay({
 
     const overlay = overlayRef.current;
     const border = borderRef.current;
-    const progress = progressRef.current;
     if (!overlay || !triggerRect) {
       onClose();
       return;
@@ -55,16 +76,6 @@ export default function MyWorkOverlay({
         onClose();
       },
     });
-
-    // Fade out progress bar first
-    if (progress) {
-      tl.to(progress, {
-        opacity: 0,
-        y: 20,
-        duration: 0.3,
-        ease: "power2.in",
-      }, 0);
-    }
 
     // Shrink border back to button
     if (border) {
@@ -94,7 +105,6 @@ export default function MyWorkOverlay({
 
     const overlay = overlayRef.current;
     const border = borderRef.current;
-    const progress = progressRef.current;
     if (!overlay) return;
 
     isAnimating.current = true;
@@ -116,9 +126,6 @@ export default function MyWorkOverlay({
         opacity: 1,
       });
     }
-    if (progress) {
-      gsap.set(progress, { opacity: 0, y: 20 });
-    }
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -126,9 +133,11 @@ export default function MyWorkOverlay({
       },
     });
 
+    const leftInset = getLeftInset();
+
     // Expand overlay to padded card
     tl.to(overlay, {
-      clipPath: `inset(${PAD.top}px ${PAD.right}px ${PAD.bottom}px ${PAD.left}px round ${BORDER_RADIUS}px)`,
+      clipPath: `inset(${PAD.top}px ${PAD.right}px ${PAD.bottom}px ${leftInset}px round ${BORDER_RADIUS}px)`,
       duration: 0.9,
       ease: "power4.inOut",
     }, 0);
@@ -139,21 +148,11 @@ export default function MyWorkOverlay({
         top: `${PAD.top}px`,
         right: `${PAD.right}px`,
         bottom: `${PAD.bottom}px`,
-        left: `${PAD.left}px`,
+        left: `${leftInset}px`,
         borderRadius: `${BORDER_RADIUS}px`,
         duration: 0.9,
         ease: "power4.inOut",
       }, 0);
-    }
-
-    // Fade in progress bar after card is mostly open
-    if (progress) {
-      tl.to(progress, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power3.out",
-      }, 0.6);
     }
 
     return () => {
@@ -176,7 +175,7 @@ export default function MyWorkOverlay({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 z-[89] bg-black/60" onClick={handleClose} />
+      <div className="fixed inset-0 z-[89] bg-black/80" onClick={handleClose} />
 
       {/* Border element */}
       <div
@@ -220,37 +219,35 @@ export default function MyWorkOverlay({
             top: PAD.top,
             right: PAD.right,
             bottom: PAD.bottom,
-            left: PAD.left,
+            left: `calc(${NAV_WIDTH} + 20px)`,
             borderRadius: `${BORDER_RADIUS}px`,
           }}
         >
           <JourneyTimeline
-            onSlideChange={setActiveIndex}
+            onSlideChange={(index) => setActiveCategory(getCategoryForIndex(index))}
             onGoToSlide={(fn) => { goToSlideRef.current = fn; }}
           />
         </div>
       </div>
 
-      {/* Progress bar - OUTSIDE the card, below it */}
+      {/* Category nav on the left — solid bg prevents content leaking */}
       <div
-        ref={progressRef}
-        className="fixed z-[92] left-1/2 -translate-x-1/2 flex items-center gap-1.5"
-        style={{ bottom: 36, opacity: 0 }}
+        className="fixed z-[92] flex items-center justify-start bg-black/95 rounded-r-lg"
+        style={{
+          top: PAD.top,
+          bottom: PAD.bottom,
+          left: 0,
+          width: NAV_WIDTH,
+          paddingLeft: 16,
+        }}
       >
-        {milestones.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goToSlideRef.current(i)}
-            className={`relative rounded-lg transition-all duration-300 flex items-center justify-center text-[10px] font-medium ${
-              i === activeIndex
-                ? "w-12 h-8 bg-gray-700/60 border-2 border-gray-400 text-gray-300"
-                : "w-10 h-7 bg-gray-800/40 border border-gray-700/50 text-gray-600 hover:border-gray-500 hover:text-gray-400"
-            }`}
-            aria-label={`Go to slide ${i + 1}`}
-          >
-            {i + 1}
-          </button>
-        ))}
+        <CategoryNav
+          activeCategory={activeCategory}
+          onCategoryClick={(cat) => {
+            const idx = categoryStartIndices[cat];
+            goToSlideRef.current?.(idx);
+          }}
+        />
       </div>
     </>
   );
