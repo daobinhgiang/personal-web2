@@ -42,7 +42,7 @@ export default function Home() {
               @ GNL VINA
             </a>
           </p>
-          <div className="flex items-center gap-[1.5vw] mt-[2.5vw] opacity-65 blur-[0.3px]">
+          <div className="flex items-center gap-[1.5vw] mt-[2.5vw] opacity-80">
             <a
               href="https://www.linkedin.com/in/giang-mdao/"
               target="_blank"
@@ -87,7 +87,7 @@ export default function Home() {
                 }
                 setOverlayOpen(true);
               }}
-              className="text-gray-500 hover:text-gray-300 hover:scale-110 hover:border-white transition-all duration-300 ease-out text-[clamp(0.875rem,1.2vw,1.125rem)] font-medium border border-gray-700 px-[1.5vw] py-[0.6vw] rounded-xl"
+              className="text-gray-400 hover:text-gray-200 hover:scale-110 hover:border-gray-300 transition-all duration-300 ease-out text-[clamp(0.875rem,1.2vw,1.125rem)] font-medium border border-gray-500 px-[1.5vw] py-[0.6vw] rounded-xl"
             >
               My Work
             </button>
