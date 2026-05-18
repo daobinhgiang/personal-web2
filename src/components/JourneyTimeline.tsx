@@ -159,11 +159,18 @@ interface JourneyTimelineProps {
 // Re-export milestones count for progress bar
 export const MILESTONES_COUNT = milestones.length;
 
-// Card dimensions — wide landscape cards, ~3.5 visible
-const CARD_WIDTH_RATIO = 0.30; // each card ~30% of container width
-const CARD_HEIGHT_RATIO = 0.32; // card height ~32% of container height → clearly landscape
-const CARD_GAP = 28; // px gap between cards
-const CARD_PADDING_LEFT = 20; // px left padding for first card
+// Card dimensions — wide landscape cards, ~3 visible
+const CARD_WIDTH_RATIO = 0.48; // each card ~48% of container width
+const CARD_HEIGHT_RATIO = 0.46; // card height ~46% of container height → clearly landscape
+const CARD_GAP_CSS = "clamp(16px, 2vw, 28px)";
+const CARD_PADDING_LEFT_CSS = "clamp(24px, 4vw, 48px)";
+
+function getCardGap() {
+  return Math.min(28, Math.max(16, window.innerWidth * 0.02));
+}
+function getCardPaddingLeft() {
+  return Math.min(48, Math.max(24, window.innerWidth * 0.04));
+}
 
 export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyTimelineProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -190,19 +197,25 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
   // Total strip width
   const getStripWidth = useCallback(() => {
     const cw = getCardWidth();
-    return CARD_PADDING_LEFT + milestones.length * cw + (milestones.length - 1) * CARD_GAP;
+    const gap = getCardGap();
+    const padL = getCardPaddingLeft();
+    return padL + milestones.length * cw + (milestones.length - 1) * gap;
   }, [getCardWidth]);
 
   // Get the x offset to place card at given index near the left of the viewport
   const getScrollX = useCallback((index: number) => {
     const cw = getCardWidth();
-    return -(index * (cw + CARD_GAP));
+    const gap = getCardGap();
+    return -(index * (cw + gap));
   }, [getCardWidth]);
 
-  // Get the x offset to center a card in the viewport
+  // Get the x offset to center a focused card in the viewport
   const getCenteredX = useCallback((index: number) => {
     const cw = getCardWidth();
-    const cardLeft = CARD_PADDING_LEFT + index * (cw + CARD_GAP);
+    const gap = getCardGap();
+    const padL = getCardPaddingLeft();
+    const expandMargin = cw * 0.075; // matches the margin added on focus
+    const cardLeft = padL + index * (cw + gap) + expandMargin;
     const cardCenter = cardLeft + cw / 2;
     return -(cardCenter - containerW.current / 2);
   }, [getCardWidth]);
@@ -249,8 +262,10 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
       // Update active index: find card closest to center
       const cw = getCardWidth();
       if (cw > 0) {
+        const gap = getCardGap();
+        const padL = getCardPaddingLeft();
         const centerWorld = -currentX.current + containerW.current / 2;
-        const idx = Math.round((centerWorld - CARD_PADDING_LEFT - cw / 2) / (cw + CARD_GAP));
+        const idx = Math.round((centerWorld - padL - cw / 2) / (cw + gap));
         const clamped = Math.max(0, Math.min(milestones.length - 1, idx));
         if (clamped !== currentIndexRef.current) {
           currentIndexRef.current = clamped;
@@ -270,7 +285,9 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
   // Clamp target within bounds
   const clampTarget = useCallback((x: number) => {
     const cw = getCardWidth();
-    const totalWidth = CARD_PADDING_LEFT + milestones.length * cw + (milestones.length - 1) * CARD_GAP;
+    const gap = getCardGap();
+    const padL = getCardPaddingLeft();
+    const totalWidth = padL + milestones.length * cw + (milestones.length - 1) * gap;
     const minX = -(totalWidth - containerW.current);
     return Math.max(minX, Math.min(0, x));
   }, [getCardWidth]);
@@ -383,14 +400,16 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
         ref={stripRef}
         className="flex items-center"
         style={{
-          gap: `${CARD_GAP}px`,
-          paddingLeft: `${CARD_PADDING_LEFT}px`,
+          gap: CARD_GAP_CSS,
+          paddingLeft: CARD_PADDING_LEFT_CSS,
           height: "100%",
           willChange: "transform",
         }}
       >
         {milestones.map((milestone, i) => {
           const isFocused = focusedIndex === i;
+          // Extra margin to push neighbors away when scaled (scale grows 15% → 7.5% each side)
+          const expandMargin = isFocused ? cardWidthPx * 0.075 : 0;
           return (
             <div
               key={i}
@@ -399,13 +418,15 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
                 width: `${cardWidthPx}px`,
                 height: `${CARD_HEIGHT_RATIO * 100}%`,
                 transform: isFocused ? "scale(1.15)" : "scale(1)",
-                transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease",
+                marginLeft: `${expandMargin}px`,
+                marginRight: `${expandMargin}px`,
+                transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, margin 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
                 zIndex: isFocused ? 10 : 1,
                 boxShadow: isFocused ? "0 0 40px rgba(59,130,246,0.15)" : "none",
               }}
               onClick={() => handleSlideTap(i)}
             >
-              <div className="h-full flex flex-col justify-center px-5 md:px-6 py-2.5 md:py-3">
+              <div className="h-full flex flex-col justify-center" style={{ padding: `clamp(10px, 1.5vh, 12px) clamp(16px, 2.5vw, 24px)` }}>
                 <SlideContent milestone={milestone} isFocused={isFocused} />
               </div>
             </div>
@@ -439,13 +460,13 @@ function SlideContent({
 
   return (
     <div className="flex flex-col justify-center h-full overflow-hidden">
-      <div className="mb-3">
-        <span className="inline-block text-xs font-semibold text-blue-400 bg-blue-500/15 px-3 py-1 rounded-md">
+      <div style={{ marginBottom: "clamp(8px, 1vh, 12px)" }}>
+        <span className="inline-block font-semibold text-blue-400 bg-blue-500/15 rounded-md" style={{ fontSize: "clamp(0.625rem, 1vw, 0.75rem)", padding: "clamp(2px, 0.4vh, 4px) clamp(8px, 1vw, 12px)" }}>
           {milestone.date}
         </span>
       </div>
 
-      <h2 className="text-lg md:text-xl font-bold text-gray-100 leading-tight">
+      <h2 className="font-bold text-gray-100 leading-tight" style={{ fontSize: "clamp(1rem, 1.8vw, 1.25rem)" }}>
         {title}
       </h2>
 
@@ -458,7 +479,7 @@ function SlideContent({
           marginTop: isFocused ? "12px" : "0px",
         }}
       >
-        <p className="text-gray-400 text-sm leading-relaxed mb-3">
+        <p className="text-gray-400 leading-relaxed" style={{ fontSize: "clamp(0.75rem, 1.2vw, 0.875rem)", marginBottom: "clamp(8px, 1vh, 12px)" }}>
           {milestone.description}
         </p>
 
