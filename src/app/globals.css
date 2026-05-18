@@ -21,8 +21,8 @@ body {
   cursor: none;
 }
 
-a, button, [role="button"], input, textarea, select, label[for] {
-  cursor: none;
+*, a, button, [role="button"], input, textarea, select, label[for] {
+  cursor: none !important;
 }
 
 [data-theme="dark"] {

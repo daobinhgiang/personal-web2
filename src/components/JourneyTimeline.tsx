@@ -413,7 +413,7 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
           return (
             <div
               key={i}
-              className="relative flex-shrink-0 rounded-2xl bg-[#141414] border border-gray-800/60 cursor-pointer overflow-hidden"
+              className="relative flex-shrink-0 rounded-2xl bg-[#141414] border border-gray-800/60 overflow-hidden"
               style={{
                 width: `${cardWidthPx}px`,
                 height: `${CARD_HEIGHT_RATIO * 100}%`,
@@ -461,12 +461,12 @@ function SlideContent({
   return (
     <div className="flex flex-col justify-center h-full overflow-hidden">
       <div style={{ marginBottom: "clamp(8px, 1vh, 12px)" }}>
-        <span className="inline-block font-semibold text-blue-400 bg-blue-500/15 rounded-md" style={{ fontSize: "clamp(0.625rem, 1vw, 0.75rem)", padding: "clamp(2px, 0.4vh, 4px) clamp(8px, 1vw, 12px)" }}>
+        <span className="inline-block font-semibold text-blue-400 bg-blue-500/15 rounded-md" style={{ fontSize: "clamp(1.5rem, 2.6vw, 1.9rem)", padding: "clamp(6px, 1vh, 12px) clamp(20px, 2.4vw, 28px)" }}>
           {milestone.date}
         </span>
       </div>
 
-      <h2 className="font-bold text-gray-100 leading-tight" style={{ fontSize: "clamp(1rem, 1.8vw, 1.25rem)" }}>
+      <h2 className="font-bold text-gray-100 leading-tight" style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
         {title}
       </h2>
 
@@ -479,7 +479,7 @@ function SlideContent({
           marginTop: isFocused ? "12px" : "0px",
         }}
       >
-        <p className="text-gray-400 leading-relaxed" style={{ fontSize: "clamp(0.75rem, 1.2vw, 0.875rem)", marginBottom: "clamp(8px, 1vh, 12px)" }}>
+        <p className="text-gray-400 leading-relaxed" style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", marginBottom: "clamp(8px, 1vh, 12px)" }}>
           {milestone.description}
         </p>
 
