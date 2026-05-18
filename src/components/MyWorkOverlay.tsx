@@ -12,8 +12,19 @@ interface MyWorkOverlayProps {
 }
 
 // Card-like overlay with padding from screen edges
-const PAD = { top: 40, right: 48, bottom: 40, left: 48 };
-const NAV_WIDTH = "clamp(120px, 10vw, 180px)";
+function getPad() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  return {
+    top: Math.min(40, Math.max(20, vh * 0.04)),
+    right: Math.min(48, Math.max(24, vw * 0.04)),
+    bottom: Math.min(40, Math.max(20, vh * 0.04)),
+    left: Math.min(48, Math.max(24, vw * 0.04)),
+  };
+}
+const NAV_HEIGHT = "clamp(56px, 7vh, 76px)";
+const PAD_Y = "clamp(20px, 4vh, 40px)";
+const PAD_X = "clamp(24px, 4vw, 48px)";
 const BORDER_RADIUS = 16;
 
 function getInsetFromRect(rect: DOMRect) {
@@ -25,12 +36,6 @@ function getInsetFromRect(rect: DOMRect) {
   };
 }
 
-/** Left inset for clip-path: nav width + 20px gap */
-function getLeftInset() {
-  const vw = window.innerWidth;
-  const navW = Math.min(180, Math.max(120, vw * 0.10));
-  return navW + 20;
-}
 
 // Compute the first milestone index for each category
 const categoryStartIndices: Record<MilestoneCategory, number> = (() => {
@@ -56,6 +61,7 @@ export default function MyWorkOverlay({
   const isAnimating = useRef(false);
   const [activeCategory, setActiveCategory] = useState<MilestoneCategory>("work");
   const goToSlideRef = useRef<((index: number) => void) | null>(null);
+  const isNavScrolling = useRef(false);
 
   const handleClose = useCallback(() => {
     if (isAnimating.current) return;
@@ -133,11 +139,11 @@ export default function MyWorkOverlay({
       },
     });
 
-    const leftInset = getLeftInset();
+    const pad = getPad();
 
     // Expand overlay to padded card
     tl.to(overlay, {
-      clipPath: `inset(${PAD.top}px ${PAD.right}px ${PAD.bottom}px ${leftInset}px round ${BORDER_RADIUS}px)`,
+      clipPath: `inset(${pad.top}px ${pad.right}px ${pad.bottom}px ${pad.left}px round ${BORDER_RADIUS}px)`,
       duration: 0.9,
       ease: "power4.inOut",
     }, 0);
@@ -145,10 +151,10 @@ export default function MyWorkOverlay({
     // Expand border to match the card
     if (border) {
       tl.to(border, {
-        top: `${PAD.top}px`,
-        right: `${PAD.right}px`,
-        bottom: `${PAD.bottom}px`,
-        left: `${leftInset}px`,
+        top: `${pad.top}px`,
+        right: `${pad.right}px`,
+        bottom: `${pad.bottom}px`,
+        left: `${pad.left}px`,
         borderRadius: `${BORDER_RADIUS}px`,
         duration: 0.9,
         ease: "power4.inOut",
@@ -194,7 +200,7 @@ export default function MyWorkOverlay({
         <button
           onClick={handleClose}
           className="fixed z-[100] w-10 h-10 flex items-center justify-center rounded-full bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors"
-          style={{ top: PAD.top + 16, right: PAD.right + 16 }}
+          style={{ top: `calc(${PAD_Y} + 8px)`, right: `calc(${PAD_X} + 16px)` }}
           aria-label="Close"
         >
           <svg
@@ -212,42 +218,48 @@ export default function MyWorkOverlay({
           </svg>
         </button>
 
-        {/* Content area inside the padded card */}
+        {/* Category nav at the top */}
+        <div
+          className="absolute flex items-center justify-center"
+          style={{
+            top: `calc(${PAD_Y} + 12px)`,
+            left: PAD_X,
+            right: PAD_X,
+            height: NAV_HEIGHT,
+          }}
+        >
+          <CategoryNav
+            activeCategory={activeCategory}
+            onCategoryClick={(cat) => {
+              setActiveCategory(cat);
+              isNavScrolling.current = true;
+              const idx = categoryStartIndices[cat];
+              goToSlideRef.current?.(idx);
+              setTimeout(() => { isNavScrolling.current = false; }, 800);
+            }}
+          />
+        </div>
+
+        {/* Content area below the nav, pushed slightly off-center downward */}
         <div
           className="absolute overflow-hidden"
           style={{
-            top: PAD.top,
-            right: PAD.right,
-            bottom: PAD.bottom,
-            left: `calc(${NAV_WIDTH} + 20px)`,
+            top: `calc(${PAD_Y} + ${NAV_HEIGHT} + 12px)`,
+            right: PAD_X,
+            bottom: `calc(${PAD_Y} - 8px)`,
+            left: PAD_X,
             borderRadius: `${BORDER_RADIUS}px`,
           }}
         >
           <JourneyTimeline
-            onSlideChange={(index) => setActiveCategory(getCategoryForIndex(index))}
+            onSlideChange={(index) => {
+              if (!isNavScrolling.current) {
+                setActiveCategory(getCategoryForIndex(index));
+              }
+            }}
             onGoToSlide={(fn) => { goToSlideRef.current = fn; }}
           />
         </div>
-      </div>
-
-      {/* Category nav on the left — solid bg prevents content leaking */}
-      <div
-        className="fixed z-[92] flex items-center justify-start bg-black/95 rounded-r-lg"
-        style={{
-          top: PAD.top,
-          bottom: PAD.bottom,
-          left: 0,
-          width: NAV_WIDTH,
-          paddingLeft: 16,
-        }}
-      >
-        <CategoryNav
-          activeCategory={activeCategory}
-          onCategoryClick={(cat) => {
-            const idx = categoryStartIndices[cat];
-            goToSlideRef.current?.(idx);
-          }}
-        />
       </div>
     </>
   );

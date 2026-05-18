@@ -23,7 +23,7 @@ export default function Home() {
     <div className="flex-1 flex flex-col justify-center max-w-[75vw] mx-auto px-[5vw] w-full overflow-hidden overscroll-none">
       <div className="flex items-center justify-between gap-[4vw]">
         <div>
-          <div className="mb-[5vw]">
+          <div className="mb-[5vw] fade-in-up" style={{ animationDelay: "0.1s" }}>
             <h1 className="text-[clamp(2.5rem,6.5vw,6rem)] font-bold text-balance leading-[1.1]">
               Giang Dao
             </h1>
@@ -31,7 +31,7 @@ export default function Home() {
               AI Engineer & Technologist
             </p>
           </div>
-          <p className="text-gray-400 text-[clamp(1rem,1.5vw,1.5rem)] max-w-[40vw] leading-relaxed">
+          <p className="text-gray-400 text-[clamp(1rem,1.5vw,1.5rem)] max-w-[40vw] leading-relaxed fade-in-up" style={{ animationDelay: "0.3s" }}>
             Currently learning about manufacturing optimization and automation{" "}
             <a
               href="https://www.linkedin.com/company/gnl-vina"
@@ -42,7 +42,7 @@ export default function Home() {
               @ GNL VINA
             </a>
           </p>
-          <div className="flex items-center gap-[1.5vw] mt-[2.5vw] opacity-80">
+          <div className="flex items-center gap-[1.5vw] mt-[2.5vw] opacity-80 fade-in-up" style={{ animationDelay: "0.5s" }}>
             <a
               href="https://www.linkedin.com/in/giang-mdao/"
               target="_blank"
@@ -98,8 +98,8 @@ export default function Home() {
           alt="Giang Dao"
           width={200}
           height={200}
-          className="rounded-3xl object-cover w-[clamp(100px,16vw,240px)] h-[clamp(100px,16vw,240px)] flex-shrink-0"
-          style={{ boxShadow: "0 0 20px rgba(255,255,255,0.08), inset 0 0 20px rgba(255,255,255,0.05)" }}
+          className="rounded-3xl object-cover w-[clamp(100px,16vw,240px)] h-[clamp(100px,16vw,240px)] flex-shrink-0 fade-in-up"
+          style={{ animationDelay: "0.2s", boxShadow: "0 0 20px rgba(255,255,255,0.08), inset 0 0 20px rgba(255,255,255,0.05)" }}
           priority
         />
       </div>
