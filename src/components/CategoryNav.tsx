@@ -6,6 +6,7 @@ import { MilestoneCategory } from "./JourneyTimeline";
 interface CategoryNavProps {
   activeCategory: MilestoneCategory;
   onCategoryClick: (category: MilestoneCategory) => void;
+  light?: boolean;
 }
 
 const categories: { key: MilestoneCategory; label: string }[] = [
@@ -16,7 +17,7 @@ const categories: { key: MilestoneCategory; label: string }[] = [
   { key: "sidequest", label: "Side-quest" },
 ];
 
-export default function CategoryNav({ activeCategory, onCategoryClick }: CategoryNavProps) {
+export default function CategoryNav({ activeCategory, onCategoryClick, light = false }: CategoryNavProps) {
   const navRef = useRef<HTMLElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<Map<MilestoneCategory, HTMLButtonElement>>(new Map());
@@ -59,8 +60,8 @@ export default function CategoryNav({ activeCategory, onCategoryClick }: Categor
               relative font-medium transition-colors duration-200
               px-[clamp(10px,1.8vw,24px)] py-[clamp(6px,1vh,14px)]
               ${isActive
-                ? "text-white"
-                : "text-gray-500 hover:text-gray-200"
+                ? (light ? "text-gray-900" : "text-white")
+                : (light ? "text-gray-400 hover:text-gray-700" : "text-gray-500 hover:text-gray-200")
               }
             `}
             style={{ fontSize: "clamp(1rem, 1.5vw, 1.35rem)" }}
