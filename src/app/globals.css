@@ -21,7 +21,7 @@ body {
   cursor: none;
 }
 
-*, a, button, [role="button"], input, textarea, select, label[for] {
+html, *, *::before, *::after, a, button, [role="button"], input, textarea, select, label[for] {
   cursor: none !important;
 }
 
@@ -111,6 +111,12 @@ html.nav-dark nav .text-xl {
   opacity: 0;
   animation: fadeInUp 0.8s ease-out forwards;
 }
+
+/* Light theme overrides when overlay opened via peel */
+.peel-light .tl-title { color: #111827; }
+.peel-light .tl-desc { color: #4b5563; }
+.peel-light .tl-track { background-color: #d1d5db; }
+.peel-light .tl-pill { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
 
 @layer utilities {
   .text-balance {

@@ -154,6 +154,7 @@ export { milestones };
 interface JourneyTimelineProps {
   onSlideChange?: (index: number) => void;
   onGoToSlide?: (fn: (index: number) => void) => void;
+  light?: boolean;
 }
 
 // Re-export milestones count for progress bar
@@ -172,7 +173,7 @@ function getCardPaddingLeft() {
   return Math.min(48, Math.max(24, window.innerWidth * 0.04));
 }
 
-export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyTimelineProps = {}) {
+export default function JourneyTimeline({ onSlideChange, onGoToSlide, light = false }: JourneyTimelineProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -413,7 +414,11 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
           return (
             <div
               key={i}
-              className="relative flex-shrink-0 rounded-2xl bg-[#141414] border border-gray-800/60 overflow-hidden"
+              className={`relative flex-shrink-0 rounded-2xl border overflow-hidden ${
+                light
+                  ? "bg-gray-50 border-gray-200"
+                  : "bg-[#141414] border-gray-800/60"
+              }`}
               style={{
                 width: `${cardWidthPx}px`,
                 height: `${CARD_HEIGHT_RATIO * 100}%`,
@@ -422,12 +427,14 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
                 marginRight: `${expandMargin}px`,
                 transition: "transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease, margin 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
                 zIndex: isFocused ? 10 : 1,
-                boxShadow: isFocused ? "0 0 40px rgba(59,130,246,0.15)" : "none",
+                boxShadow: isFocused
+                  ? (light ? "0 0 40px rgba(59,130,246,0.1), 0 4px 20px rgba(0,0,0,0.08)" : "0 0 40px rgba(59,130,246,0.15)")
+                  : "none",
               }}
               onClick={() => handleSlideTap(i)}
             >
               <div className="h-full flex flex-col justify-center" style={{ padding: `clamp(10px, 1.5vh, 12px) clamp(16px, 2.5vw, 24px)` }}>
-                <SlideContent milestone={milestone} isFocused={isFocused} />
+                <SlideContent milestone={milestone} isFocused={isFocused} light={light} />
               </div>
             </div>
           );
@@ -440,9 +447,11 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide }: JourneyT
 function SlideContent({
   milestone,
   isFocused,
+  light = false,
 }: {
   milestone: Milestone;
   isFocused: boolean;
+  light?: boolean;
 }) {
   const title = milestone.link ? (
     <a
@@ -466,7 +475,7 @@ function SlideContent({
         </span>
       </div>
 
-      <h2 className="font-bold text-gray-100 leading-tight" style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
+      <h2 className={`font-bold leading-tight ${light ? "text-gray-900" : "text-gray-100"}`} style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
         {title}
       </h2>
 
@@ -479,7 +488,7 @@ function SlideContent({
           marginTop: isFocused ? "12px" : "0px",
         }}
       >
-        <p className="text-gray-400 leading-relaxed" style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", marginBottom: "clamp(8px, 1vh, 12px)" }}>
+        <p className={`leading-relaxed ${light ? "text-gray-600" : "text-gray-400"}`} style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", marginBottom: "clamp(8px, 1vh, 12px)" }}>
           {milestone.description}
         </p>
 
