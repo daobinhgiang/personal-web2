@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 
 export default function NewPost() {
   const router = useRouter();
@@ -96,6 +97,7 @@ export default function NewPost() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <BackButton />
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 py-4">
@@ -106,12 +108,6 @@ export default function NewPost() {
                 Share your thoughts with the world
               </p>
             </div>
-            <Link
-              href="/admin"
-              className="px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              ← Back to Dashboard
-            </Link>
           </div>
         </div>
       </header>

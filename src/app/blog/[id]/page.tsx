@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "@/components/BackButton";
 
 async function getPost(id: string) {
   try {
@@ -55,15 +56,8 @@ export default async function BlogPost({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <BackButton />
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Back Navigation */}
-        <Link 
-          href="/blog" 
-          className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-8 transition-colors font-medium group"
-        >
-          <span className="group-hover:-translate-x-1 transition-transform inline-block">←</span>
-          <span className="ml-2">Back to Blog</span>
-        </Link>
 
         {/* Post Header */}
         <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -226,12 +220,11 @@ export default async function BlogPost({ params }: { params: Promise<{ id: strin
                 day: 'numeric' 
               })}
             </div>
-            <Link 
-              href="/blog" 
+            <Link
+              href="/blog"
               className="text-blue-600 hover:text-blue-700 font-medium transition-colors group inline-flex items-center"
             >
-              <span className="group-hover:-translate-x-1 transition-transform inline-block">←</span>
-              <span className="ml-2">Back to all posts</span>
+              Back to all posts
             </Link>
           </div>
         </footer>

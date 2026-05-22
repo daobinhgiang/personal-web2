@@ -9,6 +9,9 @@ export interface Milestone {
   date: string;
   title: string;
   description: string;
+  company?: string;
+  position?: string;
+  bullets?: string[];
   image?: string;
   link?: string;
   category: MilestoneCategory;
@@ -17,17 +20,48 @@ export interface Milestone {
 const milestones: Milestone[] = [
   // --- Work Experience ---
   {
-    date: "Jun 2025",
-    title: "AI Intern at ETC Technology System",
+    date: "May 2025 — August 2025",
+    title: "AI Engineer Intern at ETC Technology System",
     description:
-      "Joined ETC Technology System as an AI intern, gaining hands-on industry experience building AI-powered solutions.",
+      "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency. Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1, and Qwen3-8B. Built an Android app with Kotlin improving data acquisition speed by 40%.",
+    company: "ETC Technology System., JSC",
+    position: "AI Engineer Intern",
+    bullets: [
+      "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency; deployed with Docker, Triton serving and JMeter stress testing",
+      "Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1 for embeddings, and Qwen3-8B for medical questions",
+      "Built an Android app with Kotlin for collecting data on edge cases, improving acquiring speed by 40% with 99% accuracy",
+    ],
+    image: "/timeline/etc-team.jpg",
     category: "work",
   },
   {
-    date: "Jan 2026",
-    title: "Joined The Residency",
+    date: "August 2025 — April 2026",
+    title: "Co-Founded Kier Therapeutics",
     description:
-      "Accepted into The Residency (backed by Sam Altman), a highly selective program with less than 1% acceptance rate.",
+      "Accepted to The Residency (backed by Sam Altman) as one of 6 out of 600 startups. Built 4 versions of the app with Flutter, SwiftUI, Firebase, Mixpanel & Superwall. Gathered feedback from 600+ users and managed a 70+ member community.",
+    company: "Kier Therapeutics, Inc.",
+    position: "Co-Founder",
+    bullets: [
+      "Accepted to The Residency (backed by Sam Altman — CEO of OpenAI, as the advisor) as one of the 6 out of 600 startups",
+      "Lead product development, built 4 versions of the app with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
+      "Gathered feedback from 600+ users and manage 70+ members community for insights in product/distribution initiatives",
+      "Invited to speak at AI Tinkerers regarding our AI in Healthcare approach and Austria's National TV about Kier's mission",
+      "Mentored by clinical advisors from Stanford & The Alliance for Eating Disorders about psychotherapy best practices",
+    ],
+    image: "/timeline/ai-tinkers-talk.jpg",
+    category: "work",
+  },
+  {
+    date: "April 2026 — Present",
+    title: "Chief AI Officer at GNL VINA",
+    description:
+      "Digitalized company operations, built GNL VINA's system with NextJS, TypeScript and Neon (Postgres) on Railway. Standardized 5+ processes and benchmarked manufacturing ability for production planning and resource allocation for a $4M PO.",
+    company: "GNL VINA., JSC",
+    position: "Chief AI Officer",
+    bullets: [
+      "Digitalized company operation, built GNL VINA's System with NextJS, Typescript and Neon (Postgres); Railway hosting",
+      "Standardized 5+ processes and benchmarking GNL's manufacturing ability at each step, therefore estimating manufacturing outputs for production planning and resources allocation for $4 millions PO",
+    ],
     category: "work",
   },
   // --- Research & Certification ---
@@ -56,12 +90,31 @@ const milestones: Milestone[] = [
     category: "research",
   },
   {
-    date: "Oct 2025",
-    title: "2nd Place — Rice AI in Health Conference",
+    date: "August 2025 — Present",
+    title: "AI Researcher — Rice University",
     description:
-      "Won 2nd place at the AI in Health Conference at Rice University, presenting innovative AI applications in healthcare.",
+      "Joined the Computational Wellbeing Group at Rice ECE. Designed 50+ prompts to evaluate proprietary & open-source LLMs on psychotherapy safety for mental health applications.",
+    company: "Rice University Electrical & Computer Engineering",
+    position: "AI Researcher — Computational Wellbeing Group",
+    bullets: [
+      "Awarded Best Presentation at the Ken Kennedy Institute's AI in Health Conference for our research",
+      "Designed 50+ prompts to evaluate various proprietary & open-source LLMs on psychotherapy safety for mental health applications",
+    ],
     image: "/timeline/rice-ai-health.svg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "research",
+  },
+  {
+    date: "September 2025 — Present",
+    title: "Biomedical Researcher — University of Houston",
+    description:
+      "Researched the DSPy framework and developed algorithms & models to improve cell tracking with 10+ biomedical datasets at UH's Cullen College of Engineering.",
+    company: "Cullen College of Engineering | University of Houston",
+    position: "Biomedical Researcher",
+    bullets: [
+      "Researched DSPy framework & develop algorithms & models to improve cells tracking with 10+ biomedical dataset",
+    ],
+    image: "/timeline/uh-research.jpg",
     category: "research",
   },
   // --- Hackathon ---
