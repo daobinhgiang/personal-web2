@@ -319,9 +319,6 @@ export default function MyWorkOverlay({
     setTimeout(() => {
       setPhase("categories");
       setSelectedCategory(null);
-      // Reset scroll position
-      targetX.current = 0;
-      currentX.current = 0;
     }, 1000);
   }, []);
 
