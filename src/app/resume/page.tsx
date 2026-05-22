@@ -5,7 +5,7 @@ export default function Resume() {
     <>
       <BackButton />
       <div className="max-w-4xl mx-auto px-6 py-20">
-      <div className="mb-16">
+      <div className="mb-16 fade-in-up" style={{ animationDelay: "0.1s" }}>
         <h1 className="text-5xl font-bold mb-3 text-gray-100">Resume</h1>
         <p className="text-lg text-gray-500">
           My professional experience and skills
@@ -13,7 +13,7 @@ export default function Resume() {
       </div>
 
       {/* Experience Section */}
-      <section className="mb-14">
+      <section className="mb-14 fade-in-up" style={{ animationDelay: "0.2s" }}>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-400 mb-6">Experience</h2>
         <div className="space-y-6">
           <div className="rounded-xl border border-gray-800/60 bg-[#141414] p-6">
@@ -65,7 +65,7 @@ export default function Resume() {
       </section>
 
       {/* Research Section */}
-      <section className="mb-14">
+      <section className="mb-14 fade-in-up" style={{ animationDelay: "0.35s" }}>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-400 mb-6">Research</h2>
         <div className="space-y-6">
           <div className="rounded-xl border border-gray-800/60 bg-[#141414] p-6">
@@ -85,7 +85,7 @@ export default function Resume() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 mb-3">
               <div>
                 <h3 className="text-lg font-semibold text-gray-100">AI Researcher — Computational Wellbeing Group</h3>
-                <p className="text-sm text-gray-500">Rice University Electrical & Computer Engineering</p>
+                <p className="text-sm text-gray-500">Rice University</p>
               </div>
               <span className="text-sm text-gray-500 whitespace-nowrap">August 2025 — Present</span>
             </div>
@@ -98,7 +98,7 @@ export default function Resume() {
       </section>
 
       {/* Education Section */}
-      <section className="mb-14">
+      <section className="mb-14 fade-in-up" style={{ animationDelay: "0.5s" }}>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-400 mb-6">Education</h2>
         <div className="rounded-xl border border-gray-800/60 bg-[#141414] p-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1">
@@ -112,7 +112,7 @@ export default function Resume() {
       </section>
 
       {/* Skills Section */}
-      <section className="mb-14">
+      <section className="mb-14 fade-in-up" style={{ animationDelay: "0.65s" }}>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-400 mb-6">Skills</h2>
         <div className="rounded-xl border border-gray-800/60 bg-[#141414] p-6">
           <div className="grid md:grid-cols-3 gap-6">

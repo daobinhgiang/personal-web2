@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
-export type MilestoneCategory = "work" | "research" | "hackathon" | "leadership" | "sidequest";
+export type MilestoneCategory = "work" | "research" | "hackathon" | "sidequest";
 
 export interface Milestone {
   date: string;
@@ -18,7 +18,38 @@ export interface Milestone {
 }
 
 const milestones: Milestone[] = [
-  // --- Work Experience ---
+  // --- Work Experience (latest first) ---
+  {
+    date: "April 2026 — Present",
+    title: "Chief AI Officer at GNL VINA",
+    description:
+      "Digitalized company operations, built GNL VINA's system with NextJS, TypeScript and Neon (Postgres) on Railway. Standardized 5+ processes and benchmarked manufacturing ability for production planning and resource allocation for a $4M PO.",
+    company: "GNL VINA., JSC",
+    position: "Chief AI Officer",
+    bullets: [
+      "Digitalized company operation, built GNL VINA's System with NextJS, Typescript and Neon (Postgres); Railway hosting",
+      "Standardized 5+ processes and benchmarking GNL's manufacturing ability at each step, therefore estimating manufacturing outputs for production planning and resources allocation for $4 millions PO",
+    ],
+    image: "/timeline/gnl-vina.jpg",
+    category: "work",
+  },
+  {
+    date: "August 2025 — April 2026",
+    title: "Co-Founded Kier Therapeutics",
+    description:
+      "Accepted to The Residency (backed by Sam Altman) as one of 6 out of 600 startups. Built 4 versions of Nurtra with Flutter, SwiftUI, Firebase, Mixpanel & Superwall. Gathered feedback from 600+ users and managed a 70+ member community.",
+    company: "Kier Therapeutics, Inc.",
+    position: "Co-Founder",
+    bullets: [
+      "Accepted to The Residency (backed by Sam Altman — CEO of OpenAI, as the advisor) as one of the 6 out of 600 startups",
+      "Lead product development, built 4 versions of Nurtra with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
+      "Gathered feedback from 600+ users and manage 70+ members community for insights in product/distribution initiatives",
+      "Invited to speak at AI Tinkerers regarding our AI in Healthcare approach and Austria's National TV about Kier's mission",
+      "Mentored by clinical advisors from Stanford & The Alliance for Eating Disorders about psychotherapy best practices",
+    ],
+    image: "/timeline/kier-team.jpg",
+    category: "work",
+  },
   {
     date: "May 2025 — August 2025",
     title: "AI Engineer Intern at ETC Technology System",
@@ -34,76 +65,7 @@ const milestones: Milestone[] = [
     image: "/timeline/etc-team.jpg",
     category: "work",
   },
-  {
-    date: "August 2025 — April 2026",
-    title: "Co-Founded Kier Therapeutics",
-    description:
-      "Accepted to The Residency (backed by Sam Altman) as one of 6 out of 600 startups. Built 4 versions of the app with Flutter, SwiftUI, Firebase, Mixpanel & Superwall. Gathered feedback from 600+ users and managed a 70+ member community.",
-    company: "Kier Therapeutics, Inc.",
-    position: "Co-Founder",
-    bullets: [
-      "Accepted to The Residency (backed by Sam Altman — CEO of OpenAI, as the advisor) as one of the 6 out of 600 startups",
-      "Lead product development, built 4 versions of the app with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
-      "Gathered feedback from 600+ users and manage 70+ members community for insights in product/distribution initiatives",
-      "Invited to speak at AI Tinkerers regarding our AI in Healthcare approach and Austria's National TV about Kier's mission",
-      "Mentored by clinical advisors from Stanford & The Alliance for Eating Disorders about psychotherapy best practices",
-    ],
-    image: "/timeline/ai-tinkers-talk.jpg",
-    category: "work",
-  },
-  {
-    date: "April 2026 — Present",
-    title: "Chief AI Officer at GNL VINA",
-    description:
-      "Digitalized company operations, built GNL VINA's system with NextJS, TypeScript and Neon (Postgres) on Railway. Standardized 5+ processes and benchmarked manufacturing ability for production planning and resource allocation for a $4M PO.",
-    company: "GNL VINA., JSC",
-    position: "Chief AI Officer",
-    bullets: [
-      "Digitalized company operation, built GNL VINA's System with NextJS, Typescript and Neon (Postgres); Railway hosting",
-      "Standardized 5+ processes and benchmarking GNL's manufacturing ability at each step, therefore estimating manufacturing outputs for production planning and resources allocation for $4 millions PO",
-    ],
-    category: "work",
-  },
-  // --- Research & Certification ---
-  {
-    date: "Apr 2024",
-    title: "AWS Certified Cloud Practitioner",
-    description:
-      "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
-    image: "/timeline/aws-cert.svg",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
-    category: "research",
-  },
-  {
-    date: "Mar 2025",
-    title: "Young AI Leader — AI for Good",
-    description:
-      "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
-    image: "/timeline/ai-for-good.svg",
-    category: "research",
-  },
-  {
-    date: "May 2025",
-    title: "AI Depression Research at HPE",
-    description:
-      "Presented original AI depression research at the HPE competition, exploring the intersection of AI and mental health.",
-    category: "research",
-  },
-  {
-    date: "August 2025 — Present",
-    title: "AI Researcher — Rice University",
-    description:
-      "Joined the Computational Wellbeing Group at Rice ECE. Designed 50+ prompts to evaluate proprietary & open-source LLMs on psychotherapy safety for mental health applications.",
-    company: "Rice University Electrical & Computer Engineering",
-    position: "AI Researcher — Computational Wellbeing Group",
-    bullets: [
-      "Awarded Best Presentation at the Ken Kennedy Institute's AI in Health Conference for our research",
-      "Designed 50+ prompts to evaluate various proprietary & open-source LLMs on psychotherapy safety for mental health applications",
-    ],
-    image: "/timeline/rice-ai-health.svg",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
-    category: "research",
-  },
+  // --- Research & Certification (latest first) ---
   {
     date: "September 2025 — Present",
     title: "Biomedical Researcher — University of Houston",
@@ -114,16 +76,53 @@ const milestones: Milestone[] = [
     bullets: [
       "Researched DSPy framework & develop algorithms & models to improve cells tracking with 10+ biomedical dataset",
     ],
+    category: "research",
+  },
+  {
+    date: "August 2025 — Present",
+    title: "AI Researcher — Rice University",
+    description:
+      "Joined the Computational Wellbeing Group at Rice ECE. Designed 50+ prompts to evaluate proprietary & open-source LLMs on psychotherapy safety for mental health applications.",
+    company: "Rice University",
+    position: "AI Researcher — Computational Wellbeing Group",
+    bullets: [
+      "Awarded Best Presentation at the Ken Kennedy Institute's AI in Health Conference for our research",
+      "Designed 50+ prompts to evaluate various proprietary & open-source LLMs on psychotherapy safety for mental health applications",
+    ],
+    image: "/timeline/rice-research.jpg",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "research",
+  },
+  {
+    date: "May 2025",
+    title: "AI Depression Research at HPE",
+    description:
+      "Presented original AI depression research at the HPE competition, exploring the intersection of AI and mental health.",
     image: "/timeline/uh-research.jpg",
     category: "research",
   },
-  // --- Hackathon ---
   {
-    date: "Jan 2024",
-    title: "First Hackathon Win",
+    date: "Mar 2025",
+    title: "Young AI Leader — AI for Good",
     description:
-      "Won my very first hackathon, sparking a passion for building under pressure and collaborating with talented people.",
-    image: "/timeline/hackathon-win.svg",
+      "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
+    category: "sidequest",
+  },
+  {
+    date: "Apr 2024",
+    title: "AWS Certified Cloud Practitioner",
+    description:
+      "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "sidequest",
+  },
+  // --- Hackathon (latest first) ---
+  {
+    date: "Mar 2025",
+    title: "Harvard Rare Diseases Hackathon",
+    description:
+      "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
+    image: "/timeline/harvard-hackathon.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "hackathon",
   },
@@ -132,63 +131,35 @@ const milestones: Milestone[] = [
     title: "Won TAMUHack X",
     description:
       "Competed at TAMUHack X and took home a win, solidifying my love for hackathons and rapid prototyping.",
-    image: "/timeline/tamuhack.svg",
+    image: "/timeline/tamuhack.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "hackathon",
   },
   {
-    date: "Mar 2025",
-    title: "Harvard Rare Diseases Hackathon",
+    date: "Jan 2024",
+    title: "First Hackathon Win",
     description:
-      "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
-    image: "/timeline/harvard-hackathon.svg",
+      "Won my very first hackathon, sparking a passion for building under pressure and collaborating with talented people.",
+    image: "/timeline/first-hackathon-win.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "hackathon",
   },
-  // --- Leadership ---
+  // --- Side-quest (latest first) ---
   {
-    date: "Sep 2024",
-    title: "Founded Ping Pong @ UH",
+    date: "Feb 2026",
+    title: "My Interview with Austria's National TV",
     description:
-      "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
-    category: "leadership",
+      "Featured on Austria's National TV, sharing our story and mission with Kier Therapeutics to a broader audience.",
+    image: "/timeline/austria-tv.png",
+    category: "sidequest",
   },
   {
-    date: "Jan 2025",
-    title: "Switched to CS & Joined CodeCoogs",
+    date: "Feb 2026",
+    title: "AI in Healthcare Talk @ AI Tinkerers",
     description:
-      "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
-    category: "leadership",
-  },
-  {
-    date: "Feb 2025",
-    title: "First CodeCoogs Talk",
-    description:
-      "Gave my first talk as a CodeCoogs officer, sharing knowledge and stepping into a leadership role in the developer community.",
-    image: "/timeline/codecoogs-talk.svg",
+      "Gave a talk about our AI in Healthcare approach at AI Tinkerers, sharing insights from building Kier Therapeutics.",
+    image: "/timeline/ai-tinkers-talk.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
-    category: "leadership",
-  },
-  {
-    date: "May 2025",
-    title: "CodeCoogs VP of Operations",
-    description:
-      "Promoted to VP of Operations at CodeCoogs, scaling the organization and driving new initiatives for the developer community.",
-    category: "leadership",
-  },
-  {
-    date: "Oct 2025",
-    title: "CodeCoogs President",
-    description:
-      "Elected as President of CodeCoogs, leading one of UH's largest developer communities and shaping its future direction.",
-    category: "leadership",
-  },
-  // --- Side-quest ---
-  {
-    date: "Aug 2023",
-    title: "Joined University of Houston",
-    description:
-      "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
     category: "sidequest",
   },
   {
@@ -196,8 +167,53 @@ const milestones: Milestone[] = [
     title: "Met Peter Steinberger in Vienna",
     description:
       "Traveled to Vienna and met Peter Steinberger, connecting with one of the most influential figures in mobile development.",
-    image: "/timeline/vienna-peter.svg",
+    image: "/timeline/peter-steinberger.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "sidequest",
+  },
+  {
+    date: "Oct 2025",
+    title: "CodeCoogs President",
+    description:
+      "Elected as President of CodeCoogs, leading one of UH's largest developer communities and shaping its future direction.",
+    image: "/timeline/codecoogs.jpg",
+    category: "sidequest",
+  },
+  {
+    date: "May 2025",
+    title: "CodeCoogs VP of Operations",
+    description:
+      "Promoted to VP of Operations at CodeCoogs, scaling the organization and driving new initiatives for the developer community.",
+    category: "sidequest",
+  },
+  {
+    date: "Feb 2025",
+    title: "First CodeCoogs Talk",
+    description:
+      "Gave my first talk as a CodeCoogs Collab Director, sharing knowledge and stepping into a leadership role in the developer community.",
+    image: "/timeline/leadership-talk.jpg",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "sidequest",
+  },
+  {
+    date: "Jan 2025",
+    title: "Switched to CS & Joined CodeCoogs",
+    description:
+      "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
+    category: "sidequest",
+  },
+  {
+    date: "Sep 2024",
+    title: "Founded Ping Pong @ UH",
+    description:
+      "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
+    category: "sidequest",
+  },
+  {
+    date: "Aug 2023",
+    title: "Joined University of Houston",
+    description:
+      "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
     category: "sidequest",
   },
 ];

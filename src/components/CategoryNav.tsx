@@ -13,7 +13,6 @@ const categories: { key: MilestoneCategory; label: string }[] = [
   { key: "work", label: "Work" },
   { key: "research", label: "Research" },
   { key: "hackathon", label: "Hackathon" },
-  { key: "leadership", label: "Leadership" },
   { key: "sidequest", label: "Side-quest" },
 ];
 

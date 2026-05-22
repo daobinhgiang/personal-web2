@@ -60,7 +60,7 @@ export default async function BlogPost({ params }: { params: Promise<{ id: strin
       <div className="max-w-4xl mx-auto px-6 py-12">
 
         {/* Post Header */}
-        <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <article className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden fade-in-up" style={{ animationDelay: "0.1s" }}>
           <header className="px-8 pt-12 pb-8 border-b border-gray-100">
             <time className="text-sm font-medium text-blue-600 mb-4 block uppercase tracking-wide">
               {new Date(post.createdAt).toLocaleDateString('en-US', { 

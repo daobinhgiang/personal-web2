@@ -41,7 +41,7 @@ const categories: { key: MilestoneCategory; label: string; description: string }
   { key: "work", label: "Work", description: "Professional experience & industry roles" },
   { key: "research", label: "Research", description: "Certifications, publications & academic work" },
   { key: "hackathon", label: "Hackathon", description: "Competitions, wins & rapid prototyping" },
-  { key: "leadership", label: "Leadership", description: "Organizations, clubs & community building" },
+  { key: "sidequest", label: "Side-quest", description: "Organizations, clubs & community building" },
 ];
 
 function getMilestonesForCategory(cat: MilestoneCategory): Milestone[] {
@@ -86,6 +86,10 @@ export default function MyWorkOverlay({
   const LERP = 0.1;
   const SCROLL_SPEED = 1.2;
 
+  // Track hover during scroll via elementFromPoint
+  const [hoveredCategory, setHoveredCategory] = useState<MilestoneCategory | null>(null);
+  const mousePos = useRef<{ x: number; y: number } | null>(null);
+
   // Reset state when overlay closes
   useEffect(() => {
     if (!isOpen) {
@@ -111,7 +115,22 @@ export default function MyWorkOverlay({
     return () => window.removeEventListener("resize", update);
   }, [isOpen, phase]);
 
-  // Category card scroll: rAF loop
+  // Track mouse position over category container
+  useEffect(() => {
+    if (!isOpen || phase !== "categories") return;
+    const container = catContainerRef.current;
+    if (!container) return;
+    const onMove = (e: MouseEvent) => { mousePos.current = { x: e.clientX, y: e.clientY }; };
+    const onLeave = () => { mousePos.current = null; setHoveredCategory(null); };
+    container.addEventListener("mousemove", onMove);
+    container.addEventListener("mouseleave", onLeave);
+    return () => {
+      container.removeEventListener("mousemove", onMove);
+      container.removeEventListener("mouseleave", onLeave);
+    };
+  }, [isOpen, phase]);
+
+  // Category card scroll: rAF loop + hover detection
   useEffect(() => {
     if (!isOpen || phase !== "categories") return;
     const tick = () => {
@@ -124,6 +143,13 @@ export default function MyWorkOverlay({
       const strip = catStripRef.current;
       if (strip) {
         strip.style.transform = `translateX(${currentX.current}px)`;
+      }
+      // Detect which card is under cursor
+      if (mousePos.current) {
+        const el = document.elementFromPoint(mousePos.current.x, mousePos.current.y);
+        const card = el?.closest<HTMLElement>("[data-cat-key]");
+        const key = (card?.dataset.catKey as MilestoneCategory) || null;
+        setHoveredCategory(key);
       }
       catRafRef.current = requestAnimationFrame(tick);
     };
@@ -385,19 +411,27 @@ export default function MyWorkOverlay({
                   willChange: "transform",
                 }}
               >
-                {categories.map(({ key, label }) => {
+                {categories.map(({ key, label }, idx) => {
                   const isPressed = pressedCategory === key;
+                  const isHovered = hoveredCategory === key && !isPressed;
                   return (
                     <div
                       key={key}
-                      className="relative flex-shrink-0 rounded-2xl border overflow-hidden bg-[#141414] border-gray-800/60"
+                      data-cat-key={key}
+                      className="relative flex-shrink-0 rounded-2xl border overflow-hidden bg-[#141414] fade-in-up cursor-pointer"
                       style={{
+                        animationDelay: `${0.1 + idx * 0.15}s`,
                         width: `${catCardWidthPx}px`,
                         height: `${CARD_HEIGHT_RATIO * 100}%`,
                         transform: isPressed ? "scale(0.95)" : "scale(1)",
-                        transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease",
+                        transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease",
                         zIndex: 1,
-                        boxShadow: isPressed ? "0 0 20px rgba(59,130,246,0.2)" : "none",
+                        borderColor: isHovered ? "rgba(255,255,255,0.3)" : "rgba(31,41,55,0.6)",
+                        boxShadow: isPressed
+                          ? "0 0 20px rgba(59,130,246,0.2)"
+                          : isHovered
+                            ? "0 0 30px rgba(255,255,255,0.08), inset 0 0 30px rgba(255,255,255,0.03)"
+                            : "none",
                       }}
                       onClick={() => handleCategoryTap(key)}
                     >
@@ -406,8 +440,8 @@ export default function MyWorkOverlay({
                           src="/timeline/ai-tinkers-talk.jpg"
                           alt="Work"
                           fill
-                          className="object-cover opacity-40"
-                          unoptimized
+                          className="object-cover transition-opacity duration-300"
+                          style={{ willChange: "opacity", opacity: isHovered ? 0.7 : 0.4 }}
                         />
                       )}
                       {key === "research" && (
@@ -415,8 +449,8 @@ export default function MyWorkOverlay({
                           src="/timeline/research-conference.jpg"
                           alt="Research"
                           fill
-                          className="object-cover opacity-40"
-                          unoptimized
+                          className="object-cover transition-opacity duration-300"
+                          style={{ willChange: "opacity", opacity: isHovered ? 0.7 : 0.4 }}
                         />
                       )}
                       {key === "hackathon" && (
@@ -424,17 +458,17 @@ export default function MyWorkOverlay({
                           src="/timeline/hackathon-rice.jpg"
                           alt="Hackathon"
                           fill
-                          className="object-cover opacity-40"
-                          unoptimized
+                          className="object-cover transition-opacity duration-300"
+                          style={{ willChange: "opacity", opacity: isHovered ? 0.7 : 0.4 }}
                         />
                       )}
-                      {key === "leadership" && (
+                      {key === "sidequest" && (
                         <Image
-                          src="/timeline/leadership-talk.jpg"
-                          alt="Leadership"
+                          src="/timeline/austria-tv.png"
+                          alt="Side-quest"
                           fill
-                          className="object-cover opacity-40"
-                          unoptimized
+                          className="object-cover transition-opacity duration-300"
+                          style={{ willChange: "opacity", opacity: isHovered ? 0.7 : 0.4 }}
                         />
                       )}
                       <div className="relative z-10 h-full flex flex-col justify-start items-start" style={{ padding: "clamp(16px, 2.5vh, 24px) clamp(16px, 2.5vw, 24px)" }}>
@@ -481,7 +515,6 @@ export default function MyWorkOverlay({
               right: PAD_X,
               bottom: PAD_Y,
               left: PAD_X,
-              animation: "fadeInUp 0.4s ease-out",
             }}
           >
             {/* Milestones laid out vertically */}
@@ -489,9 +522,9 @@ export default function MyWorkOverlay({
               {categoryMilestones.map((milestone, i) => (
                 <div
                   key={i}
-                  className="rounded-xl border border-gray-800/60 bg-[#141414] p-6"
+                  className="rounded-xl border border-gray-800/60 bg-[#141414] p-6 fade-in-up"
                   style={{
-                    animation: `fadeInUp 0.4s ease-out ${i * 0.08}s both`,
+                    animationDelay: `${0.1 + i * 0.12}s`,
                   }}
                 >
                   {milestone.company ? (
@@ -524,8 +557,8 @@ export default function MyWorkOverlay({
                         </ul>
                       )}
                       {milestone.image && (
-                        <div className="mt-4">
-                          <Image src={milestone.image} alt={milestone.title} width={500} height={250} unoptimized className="rounded-lg shadow-lg max-w-full h-auto max-h-[25vh] object-cover" />
+                        <div className="mt-4 w-1/2">
+                          <Image src={milestone.image} alt={milestone.title} width={800} height={450} unoptimized className="rounded-lg shadow-lg w-full h-auto object-contain" />
                         </div>
                       )}
                     </>
@@ -549,8 +582,8 @@ export default function MyWorkOverlay({
                         {milestone.description}
                       </p>
                       {milestone.image && (
-                        <div className="mt-3">
-                          <Image src={milestone.image} alt={milestone.title} width={400} height={200} unoptimized className="rounded-lg shadow-lg max-w-full h-auto max-h-[25vh] object-cover" />
+                        <div className="mt-3 w-1/2">
+                          <Image src={milestone.image} alt={milestone.title} width={800} height={450} unoptimized className="rounded-lg shadow-lg w-full h-auto object-contain" />
                         </div>
                       )}
                     </>
