@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
-import { MilestoneCategory } from "./JourneyTimeline";
+import { MilestoneCategory } from "@/data/milestones";
 
 interface CategoryNavProps {
   activeCategory: MilestoneCategory;
@@ -13,7 +13,6 @@ const categories: { key: MilestoneCategory; label: string }[] = [
   { key: "work", label: "Work" },
   { key: "research", label: "Research" },
   { key: "hackathon", label: "Hackathon" },
-  { key: "leadership", label: "Leadership" },
   { key: "sidequest", label: "Side-quest" },
 ];
 

@@ -44,7 +44,7 @@ export default function Home() {
           </p>
           <div className="flex items-center gap-[1.5vw] mt-[2.5vw] opacity-80 fade-in-up" style={{ animationDelay: "0.5s" }}>
             <a
-              href="https://www.linkedin.com/in/giang-mdao/"
+              href="https://www.linkedin.com/in/michael-gdao/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-500 hover:text-gray-300 hover:scale-110 transition-all duration-300 ease-out"
