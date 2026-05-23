@@ -7,6 +7,7 @@ export type MilestoneCategory = "work" | "research" | "hackathon" | "sidequest";
 
 export interface Milestone {
   date: string;
+  sortDate: string; // YYYY-MM for automatic chronological sorting (use YYYY-99 for "Present")
   title: string;
   description: string;
   company?: string;
@@ -15,12 +16,17 @@ export interface Milestone {
   image?: string;
   link?: string;
   category: MilestoneCategory;
+  award?: string;
 }
 
-const milestones: Milestone[] = [
-  // --- Work Experience (latest first) ---
+// Category display order — items within each category are auto-sorted by sortDate (latest first)
+const CATEGORY_ORDER: MilestoneCategory[] = ["work", "research", "hackathon", "sidequest"];
+
+const rawMilestones: Milestone[] = [
+  // --- Work Experience ---
   {
     date: "April 2026 — Present",
+    sortDate: "2026-99",
     title: "Chief AI Officer at GNL VINA",
     description:
       "Digitalized company operations, built GNL VINA's system with NextJS, TypeScript and Neon (Postgres) on Railway. Standardized 5+ processes and benchmarked manufacturing ability for production planning and resource allocation for a $4M PO.",
@@ -35,6 +41,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "August 2025 — April 2026",
+    sortDate: "2025-08",
     title: "Co-Founded Kier Therapeutics",
     description:
       "Accepted to The Residency (backed by Sam Altman) as one of 6 out of 600 startups. Built 4 versions of Nurtra with Flutter, SwiftUI, Firebase, Mixpanel & Superwall. Gathered feedback from 600+ users and managed a 70+ member community.",
@@ -42,8 +49,8 @@ const milestones: Milestone[] = [
     position: "Co-Founder",
     bullets: [
       "Accepted to The Residency (backed by Sam Altman — CEO of OpenAI, as the advisor) as one of the 6 out of 600 startups",
-      "Lead product development, built 4 versions of Nurtra with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
-      "Gathered feedback from 600+ users and manage 70+ members community for insights in product/distribution initiatives",
+      "Built product and gather feedback, built 4 versions of Nurtra with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
+      "Grew to 600+ users, managed 70+ members community; achieved 200k+ views/300+ followers across all platforms",
       "Invited to speak at AI Tinkerers regarding our AI in Healthcare approach and Austria's National TV about Kier's mission",
       "Mentored by clinical advisors from Stanford & The Alliance for Eating Disorders about psychotherapy best practices",
     ],
@@ -52,6 +59,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "May 2025 — August 2025",
+    sortDate: "2025-05",
     title: "AI Engineer Intern at ETC Technology System",
     description:
       "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency. Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1, and Qwen3-8B. Built an Android app with Kotlin improving data acquisition speed by 40%.",
@@ -65,9 +73,10 @@ const milestones: Milestone[] = [
     image: "/timeline/etc-team.jpg",
     category: "work",
   },
-  // --- Research & Certification (latest first) ---
+  // --- Research ---
   {
     date: "September 2025 — Present",
+    sortDate: "2025-99",
     title: "Biomedical Researcher — University of Houston",
     description:
       "Researched the DSPy framework and developed algorithms & models to improve cell tracking with 10+ biomedical datasets at UH's Cullen College of Engineering.",
@@ -80,6 +89,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "August 2025 — Present",
+    sortDate: "2025-98",
     title: "AI Researcher — Rice University",
     description:
       "Joined the Computational Wellbeing Group at Rice ECE. Designed 50+ prompts to evaluate proprietary & open-source LLMs on psychotherapy safety for mental health applications.",
@@ -92,33 +102,21 @@ const milestones: Milestone[] = [
     image: "/timeline/rice-research.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "research",
+    award: "Best Presentation",
   },
   {
     date: "May 2025",
+    sortDate: "2025-05",
     title: "AI Depression Research at HPE",
     description:
       "Presented original AI depression research at the HPE competition, exploring the intersection of AI and mental health.",
     image: "/timeline/uh-research.jpg",
     category: "research",
   },
+  // --- Hackathon ---
   {
     date: "Mar 2025",
-    title: "Young AI Leader — AI for Good",
-    description:
-      "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
-    category: "sidequest",
-  },
-  {
-    date: "Apr 2024",
-    title: "AWS Certified Cloud Practitioner",
-    description:
-      "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
-    link: "https://www.linkedin.com/in/giangmichaeldao/",
-    category: "sidequest",
-  },
-  // --- Hackathon (latest first) ---
-  {
-    date: "Mar 2025",
+    sortDate: "2025-03",
     title: "Harvard Rare Diseases Hackathon",
     description:
       "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
@@ -128,25 +126,30 @@ const milestones: Milestone[] = [
   },
   {
     date: "Jan 2024",
-    title: "Won TAMUHack X",
+    sortDate: "2024-01",
+    title: "Won 1st Place at TAMUHack",
     description:
-      "Competed at TAMUHack X and took home a win, solidifying my love for hackathons and rapid prototyping.",
+      "Built a Chrome Extension to detect phishing emails and won 1st place at TAMUHack X.",
     image: "/timeline/tamuhack.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "hackathon",
+    award: "1st Place",
   },
   {
     date: "Jan 2024",
-    title: "First Hackathon Win",
+    sortDate: "2024-01",
+    title: "Rice Datathon",
     description:
-      "Won my very first hackathon, sparking a passion for building under pressure and collaborating with talented people.",
+      "Analyzed FDA data and identified alcohol consumption as the most detrimental contributor to long-term diseases and early death, providing actionable suggestions to reduce its impact.",
     image: "/timeline/first-hackathon-win.jpg",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "hackathon",
+    award: "1st Place",
   },
-  // --- Side-quest (latest first) ---
+  // --- Side-quest ---
   {
     date: "Feb 2026",
+    sortDate: "2026-02",
     title: "My Interview with Austria's National TV",
     description:
       "Featured on Austria's National TV, sharing our story and mission with Kier Therapeutics to a broader audience.",
@@ -155,6 +158,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "Feb 2026",
+    sortDate: "2026-02",
     title: "AI in Healthcare Talk @ AI Tinkerers",
     description:
       "Gave a talk about our AI in Healthcare approach at AI Tinkerers, sharing insights from building Kier Therapeutics.",
@@ -164,6 +168,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "Feb 2026",
+    sortDate: "2026-02",
     title: "Met Peter Steinberger in Vienna",
     description:
       "Traveled to Vienna and met Peter Steinberger, connecting with one of the most influential figures in mobile development.",
@@ -172,22 +177,33 @@ const milestones: Milestone[] = [
     category: "sidequest",
   },
   {
-    date: "Oct 2025",
+    date: "Dec 2025",
+    sortDate: "2025-12",
     title: "CodeCoogs President",
     description:
-      "Elected as President of CodeCoogs, leading one of UH's largest developer communities and shaping its future direction.",
+      "Elected as President of CodeCoogs, leading Houston's largest developer communities @ 300 members",
     image: "/timeline/codecoogs.jpg",
     category: "sidequest",
   },
   {
     date: "May 2025",
+    sortDate: "2025-05",
     title: "CodeCoogs VP of Operations",
     description:
-      "Promoted to VP of Operations at CodeCoogs, scaling the organization and driving new initiatives for the developer community.",
+      "Promoted to VP of Operations at CodeCoogs.",
+    category: "sidequest",
+  },
+  {
+    date: "Mar 2025",
+    sortDate: "2025-03",
+    title: "Young AI Leader — AI for Good",
+    description:
+      "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
     category: "sidequest",
   },
   {
     date: "Feb 2025",
+    sortDate: "2025-02",
     title: "First CodeCoogs Talk",
     description:
       "Gave my first talk as a CodeCoogs Collab Director, sharing knowledge and stepping into a leadership role in the developer community.",
@@ -197,6 +213,7 @@ const milestones: Milestone[] = [
   },
   {
     date: "Jan 2025",
+    sortDate: "2025-01",
     title: "Switched to CS & Joined CodeCoogs",
     description:
       "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
@@ -204,13 +221,24 @@ const milestones: Milestone[] = [
   },
   {
     date: "Sep 2024",
+    sortDate: "2024-09",
     title: "Founded Ping Pong @ UH",
     description:
       "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
     category: "sidequest",
   },
   {
+    date: "Apr 2024",
+    sortDate: "2024-04",
+    title: "AWS Certified Cloud Practitioner",
+    description:
+      "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
+    link: "https://www.linkedin.com/in/giangmichaeldao/",
+    category: "sidequest",
+  },
+  {
     date: "Aug 2023",
+    sortDate: "2023-08",
     title: "Joined University of Houston",
     description:
       "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
@@ -218,7 +246,14 @@ const milestones: Milestone[] = [
   },
 ];
 
-export { milestones };
+// Auto-sort: group by category order, then sort within each category by sortDate descending
+const milestones: Milestone[] = CATEGORY_ORDER.flatMap((cat) =>
+  rawMilestones
+    .filter((m) => m.category === cat)
+    .sort((a, b) => b.sortDate.localeCompare(a.sortDate))
+);
+
+export { milestones, CATEGORY_ORDER };
 
 interface JourneyTimelineProps {
   onSlideChange?: (index: number) => void;
@@ -264,13 +299,6 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide, light = fa
   // Compute card width in px
   const getCardWidth = useCallback(() => containerW.current * CARD_WIDTH_RATIO, []);
 
-  // Total strip width
-  const getStripWidth = useCallback(() => {
-    const cw = getCardWidth();
-    const gap = getCardGap();
-    const padL = getCardPaddingLeft();
-    return padL + milestones.length * cw + (milestones.length - 1) * gap;
-  }, [getCardWidth]);
 
   // Get the x offset to place card at given index near the left of the viewport
   const getScrollX = useCallback((index: number) => {
@@ -538,10 +566,18 @@ function SlideContent({
 
   return (
     <div className="flex flex-col justify-center h-full overflow-hidden">
-      <div style={{ marginBottom: "clamp(8px, 1vh, 12px)" }}>
+      <div className="flex items-center flex-wrap" style={{ marginBottom: "clamp(8px, 1vh, 12px)", gap: "clamp(6px, 1vw, 10px)" }}>
         <span className="inline-block font-semibold text-blue-400 bg-blue-500/15 rounded-md" style={{ fontSize: "clamp(1.5rem, 2.6vw, 1.9rem)", padding: "clamp(6px, 1vh, 12px) clamp(20px, 2.4vw, 28px)" }}>
           {milestone.date}
         </span>
+        {milestone.award && (
+          <span className="inline-flex items-center gap-1.5 font-semibold text-amber-300 bg-amber-400/15 rounded-md" style={{ fontSize: "clamp(1.3rem, 2.2vw, 1.6rem)", padding: "clamp(5px, 0.8vh, 10px) clamp(14px, 1.8vw, 20px)" }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="shrink-0" style={{ width: "clamp(14px, 2vw, 18px)", height: "clamp(14px, 2vw, 18px)" }}>
+              <path d="M5 3h14a1 1 0 011 1v3a5 5 0 01-3.5 4.77A5.001 5.001 0 0113 15.92V19h3a1 1 0 110 2H8a1 1 0 110-2h3v-3.08A5.001 5.001 0 017.5 11.77 5 5 0 014 7V4a1 1 0 011-1zm1 2v2a3 3 0 002.05 2.84A5.02 5.02 0 018 9V5H6zm12 0h-2v4c0 .36-.04.7-.1 1.03A3 3 0 0018 7V5z"/>
+            </svg>
+            {milestone.award}
+          </span>
+        )}
       </div>
 
       <h2 className={`font-bold leading-tight ${light ? "text-gray-900" : "text-gray-100"}`} style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
