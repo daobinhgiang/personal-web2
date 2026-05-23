@@ -3,7 +3,15 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
 import Image from "next/image";
-import { milestones, CATEGORY_ORDER, MilestoneCategory, Milestone, GitHubIcon, LinkedInIcon } from "./JourneyTimeline";
+import { milestones, CATEGORY_ORDER, MilestoneCategory, Milestone } from "@/data/milestones";
+import {
+  CARD_WIDTH_RATIO,
+  CARD_ASPECT_RATIO,
+  CARD_GAP_CSS,
+  CARD_PADDING_LEFT_CSS,
+  getCardGap,
+  getCardPaddingLeft,
+} from "@/utils/cardLayout";
 
 interface MyWorkOverlayProps {
   isOpen: boolean;
@@ -50,18 +58,20 @@ function getMilestonesForCategory(cat: MilestoneCategory): Milestone[] {
   return milestones.filter((m) => m.category === cat);
 }
 
-
-// Card dimensions matching JourneyTimeline
-const CARD_WIDTH_RATIO = 0.48;
-const CARD_HEIGHT_RATIO = 0.46;
-const CARD_GAP_CSS = "clamp(16px, 2vw, 28px)";
-const CARD_PADDING_LEFT_CSS = "clamp(24px, 4vw, 48px)";
-
-function getCardGap() {
-  return Math.min(28, Math.max(16, window.innerWidth * 0.02));
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+    </svg>
+  );
 }
-function getCardPaddingLeft() {
-  return Math.min(48, Math.max(24, window.innerWidth * 0.04));
+
+function LinkedInIcon({ className }: { className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+    </svg>
+  );
 }
 
 export default function MyWorkOverlay({
@@ -84,6 +94,7 @@ export default function MyWorkOverlay({
   const catRafRef = useRef<number | null>(null);
   const catContainerW = useRef(0);
   const [catCardWidthPx, setCatCardWidthPx] = useState(0);
+  const [catCardHeightPx, setCatCardHeightPx] = useState(0);
 
   const LERP = 0.1;
   const SCROLL_SPEED = 1.2;
@@ -110,7 +121,18 @@ export default function MyWorkOverlay({
       const el = catContainerRef.current;
       if (!el) return;
       catContainerW.current = el.offsetWidth;
-      setCatCardWidthPx(el.offsetWidth * CARD_WIDTH_RATIO);
+      const widthFromContainer = el.offsetWidth * CARD_WIDTH_RATIO;
+      const heightFromWidth = widthFromContainer * CARD_ASPECT_RATIO;
+      const maxHeight = el.offsetHeight * 0.85; // leave some vertical breathing room
+      if (heightFromWidth > maxHeight) {
+        // Height-constrained: derive width from max height
+        setCatCardHeightPx(maxHeight);
+        setCatCardWidthPx(maxHeight / CARD_ASPECT_RATIO);
+      } else {
+        // Width-constrained: normal behavior
+        setCatCardWidthPx(widthFromContainer);
+        setCatCardHeightPx(heightFromWidth);
+      }
     };
     update();
     window.addEventListener("resize", update);
@@ -286,22 +308,6 @@ export default function MyWorkOverlay({
     };
   }, [isOpen, triggerRect]);
 
-  // Escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (phase === "content" || phase === "loading") {
-          handleBack();
-        } else {
-          handleClose();
-        }
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isOpen, handleClose, phase]);
-
   const handleCategoryTap = useCallback((cat: MilestoneCategory) => {
     setPressedCategory(cat);
     // Press animation then transition
@@ -323,6 +329,22 @@ export default function MyWorkOverlay({
       setSelectedCategory(null);
     }, 1000);
   }, []);
+
+  // Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (phase === "content" || phase === "loading") {
+          handleBack();
+        } else {
+          handleClose();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, handleClose, handleBack, phase]);
 
   if (!isOpen) return null;
 
@@ -420,7 +442,7 @@ export default function MyWorkOverlay({
                       style={{
                         animationDelay: `${0.1 + idx * 0.15}s`,
                         width: `${catCardWidthPx}px`,
-                        height: `${CARD_HEIGHT_RATIO * 100}%`,
+                        height: `${catCardHeightPx}px`,
                         transform: isPressed ? "scale(0.95)" : "scale(1)",
                         transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease",
                         zIndex: 1,
@@ -469,8 +491,8 @@ export default function MyWorkOverlay({
                           style={{ willChange: "opacity", opacity: isHovered ? 0.7 : 0.4 }}
                         />
                       )}
-                      <div className="relative z-10 h-full flex flex-col justify-start items-start" style={{ padding: "clamp(16px, 2.5vh, 24px) clamp(16px, 2.5vw, 24px)" }}>
-                        <h2 className="font-bold leading-tight text-gray-100" style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
+                      <div className="relative z-10 h-full flex flex-col justify-start items-start" style={{ padding: `${Math.min(28, Math.max(12, catCardHeightPx * 0.06))}px ${Math.min(28, Math.max(12, catCardWidthPx * 0.05))}px` }}>
+                        <h2 className="font-bold leading-tight text-gray-100" style={{ fontSize: `${Math.min(52, Math.max(28, catCardWidthPx * 0.09))}px` }}>
                           {label}
                         </h2>
                       </div>
@@ -579,9 +601,9 @@ export default function MyWorkOverlay({
                     </ul>
                   )}
                   {milestone.images ? (
-                    <div className="mt-4 flex gap-2 w-full" style={{ height: "clamp(150px, 25vh, 300px)" }}>
+                    <div className="mt-4 grid grid-cols-2 gap-2 w-full">
                       {milestone.images.map((img, i) => (
-                        <img key={i} src={img} alt={`${milestone.title} ${i + 1}`} className="rounded-lg shadow-lg h-full min-w-0 flex-1 object-cover" />
+                        <img key={i} src={img} alt={`${milestone.title} ${i + 1}`} className="rounded-lg shadow-lg w-full h-auto object-cover aspect-[16/10]" />
                       ))}
                     </div>
                   ) : milestone.image ? (

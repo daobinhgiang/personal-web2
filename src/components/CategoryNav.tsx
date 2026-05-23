@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useCallback } from "react";
-import { MilestoneCategory } from "./JourneyTimeline";
+import { MilestoneCategory } from "@/data/milestones";
 
 interface CategoryNavProps {
   activeCategory: MilestoneCategory;
