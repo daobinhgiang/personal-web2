@@ -10,11 +10,11 @@ export interface Milestone {
   startDate: string; // YYYY-MM
   endDate?: string; // YYYY-MM; omit for ongoing roles
   title: string;
-  description: string;
-  company?: string;
-  position?: string;
+  subtitle?: string;
+  description?: string;
   bullets?: string[];
   image?: string;
+  imageSize?: "sm" | "md";
   images?: string[];
   link?: string;
   headerLink?: string;
@@ -37,11 +37,8 @@ const rawMilestones: Milestone[] = [
   {
     date: "April 2026 — Present",
     startDate: "2026-04",
-    title: "Chief AI Officer at GNL VINA",
-    description:
-      "Digitalized company operations, built GNL VINA's system with NextJS, TypeScript and Neon (Postgres) on Railway. Standardized 5+ processes and benchmarked manufacturing ability for production planning and resource allocation for a $4M PO.",
-    company: "GNL VINA., JSC",
-    position: "Chief AI Officer",
+    title: "GNL VINA., JSC",
+    subtitle: "Chief AI Officer",
     bullets: [
       "Digitalized company operation, built GNL VINA's System with NextJS, Typescript and Neon (Postgres); Railway hosting",
       "Standardized 5+ processes and benchmarking GNL's manufacturing ability at each step, therefore estimating manufacturing outputs for production planning and resources allocation for $4 millions PO",
@@ -53,11 +50,8 @@ const rawMilestones: Milestone[] = [
     date: "August 2025 — April 2026",
     startDate: "2025-08",
     endDate: "2026-04",
-    title: "Co-Founded Kier Therapeutics",
-    description:
-      "Accepted to The Residency (backed by Sam Altman) as one of 6 out of 600 startups. Built 4 versions of Nurtra with Flutter, SwiftUI, Firebase, Mixpanel & Superwall. Gathered feedback from 600+ users and managed a 70+ member community.",
-    company: "Kier Therapeutics, Inc.",
-    position: "Co-Founder",
+    title: "Kier Therapeutics, Inc.",
+    subtitle: "Co-Founder",
     bullets: [
       "Accepted to The Residency (backed by Sam Altman — CEO of OpenAI, as the advisor) as one of the 6 out of 600 startups",
       "Built product and gather feedback, built 4 versions of Nurtra with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
@@ -72,11 +66,8 @@ const rawMilestones: Milestone[] = [
     date: "May 2025 — August 2025",
     startDate: "2025-05",
     endDate: "2025-08",
-    title: "AI Engineer Intern at ETC Technology System",
-    description:
-      "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency. Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1, and Qwen3-8B. Built an Android app with Kotlin improving data acquisition speed by 40%.",
-    company: "ETC Technology System., JSC",
-    position: "AI Engineer Intern",
+    title: "ETC Technology System., JSC",
+    subtitle: "AI Engineer Intern",
     bullets: [
       "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency; deployed with Docker, Triton serving and JMeter stress testing",
       "Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1 for embeddings, and Qwen3-8B for medical questions",
@@ -90,11 +81,8 @@ const rawMilestones: Milestone[] = [
     date: "September 2025 — December 2025",
     startDate: "2025-09",
     endDate: "2025-12",
-    title: "Biomedical Researcher — University of Houston",
-    description:
-      "Researched the DSPy framework and developed algorithms & models to improve cell tracking with 10+ biomedical datasets at UH's Cullen College of Engineering.",
-    company: "Cullen College of Engineering | University of Houston",
-    position: "Biomedical Researcher",
+    title: "Cullen College of Engineering | University of Houston",
+    subtitle: "Biomedical Researcher",
     bullets: [
       "Researched DSPy framework & develop algorithms & models to improve cells tracking with 10+ biomedical dataset",
     ],
@@ -104,11 +92,8 @@ const rawMilestones: Milestone[] = [
     date: "August 2025 — December 2025",
     startDate: "2025-08",
     endDate: "2025-12",
-    title: "AI Researcher — Rice University",
-    description:
-      "Joined the Computational Wellbeing Group at Rice ECE. Designed 50+ prompts to evaluate proprietary & open-source LLMs on psychotherapy safety for mental health applications.",
-    company: "Rice University",
-    position: "AI Researcher — Computational Wellbeing Group",
+    title: "Rice University",
+    subtitle: "AI Researcher — Computational Wellbeing Group",
     bullets: [
       "Awarded Best Presentation at the Ken Kennedy Institute's AI in Health Conference for our research",
       "Designed 50+ prompts to evaluate various proprietary & open-source LLMs on psychotherapy safety for mental health applications",
@@ -123,8 +108,9 @@ const rawMilestones: Milestone[] = [
     startDate: "2025-05",
     endDate: "2025-05",
     title: "AI Depression Research at HPE",
-    description:
+    bullets: [
       "Presented original AI depression research at the HPE competition, exploring the intersection of AI and mental health.",
+    ],
     image: "/timeline/uh-research.jpg",
     category: "research",
   },
@@ -134,16 +120,14 @@ const rawMilestones: Milestone[] = [
     startDate: "2025-03",
     endDate: "2025-03",
     title: "Harvard Rare Diseases Hackathon",
-    position: "Software Engineer",
-    company: "Harvard Rare Diseases Hackathon",
-    description:
-      "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, built an all-in-one web app for symptoms management",
+    subtitle: "Software Engineer",
     bullets: [
       "Created a Flask app that monitors rare disease patients' health and provides personalized support for nutritional analysis",
       "Constructed 6+ functions, including voice interaction using Google Speech Recognition, achieving wake-word detection with a 25% improvement in navigation speed",
       "Received scholarship from Harvard that covered travel and living expenses for the 2-day hackathon",
     ],
     image: "/timeline/harvard-hackathon.jpg",
+    imageSize: "sm",
     link: "https://github.com/daobinhgiang/HackRareOhana",
     category: "hackathon",
   },
@@ -151,11 +135,8 @@ const rawMilestones: Milestone[] = [
     date: "Jan 2024",
     startDate: "2024-01",
     endDate: "2024-01",
-    title: "TAMUHack - 1st Place",
-    position: "Front-end Engineer",
-    company: "TAMUHack X",
-    description:
-      "Built a Chrome Extension to detect phishing emails.",
+    title: "TAMUHack X",
+    subtitle: "Front-end Engineer",
     bullets: [
       "Engineered a Chrome Extension with SafeBrowsing API to detect phishing links with 95% accuracy; won 1st place",
     ],
@@ -168,11 +149,8 @@ const rawMilestones: Milestone[] = [
     date: "Jan 2024",
     startDate: "2024-01",
     endDate: "2024-01",
-    title: "Rice Datathon 2024 - Best Visiting Team",
-    position: "Data Scientist",
-    company: "Rice Datathon 2024",
-    description:
-      "Analyzed FDA data and identified alcohol as the top contributor to long-term disease and early death, proposing reduction strategies.",
+    title: "Rice Datathon 2024",
+    subtitle: "Data Scientist",
     bullets: [
       'Competed in a team of 2 against over 550+ students across Houston, received recognition as "The Best Visiting Team"',
       "Processed a dataset of 100,000+ examples, removed 5,000+ outliers to weight different harmful substances",
@@ -187,12 +165,10 @@ const rawMilestones: Milestone[] = [
     date: "Feb 2026",
     startDate: "2026-02",
     endDate: "2026-02",
-    title: "My Interview with Austria's National TV",
-    company: "Kier Therapeutics",
-    description:
-      "Featured on Austria's National TV, sharing our story and mission with Kier Therapeutics to a broader audience.",
+    title: "Kier Therapeutics",
+    subtitle: "My Interview with Austria's National TV",
     bullets: [
-      "Featured on Austria's National TV, sharing our story and mission with Kier Therapeutics to a broader audience.",
+      "Featured on Austria's National TV, sharing our story and mission with Kier Therapeutics to Europe.",
     ],
     images: ["/timeline/austria-tv.png", "/timeline/austria-tv-2.jpg"],
     link: "https://www.linkedin.com/posts/giang-mdao_national-tv-of-europe-interviewed-us-about-activity-7438246610373083136-zg7v?utm_source=share&utm_medium=member_desktop&rcm=ACoAAENiUkgBbc6bFq4yrTBZeiQ6aGcmhlOf1jQ",
@@ -202,11 +178,9 @@ const rawMilestones: Milestone[] = [
     date: "Feb 2026",
     startDate: "2026-02",
     endDate: "2026-02",
-    title: "AI in Healthcare Talk @ AI Tinkerers",
-    company: "AI Tinkerers",
+    title: "AI Tinkerers",
+    subtitle: "AI in Healthcare Talk",
     headerLink: "https://aitinkerers.org/",
-    description:
-      "Gave a talk about our AI in Healthcare approach at AI Tinkerers, sharing insights from building Kier Therapeutics.",
     bullets: [
       "Gave a talk about our AI in Healthcare approach at AI Tinkerers, sharing insights from building Kier Therapeutics.",
     ],
@@ -219,13 +193,11 @@ const rawMilestones: Milestone[] = [
     startDate: "2026-02",
     endDate: "2026-02",
     title: "Met Peter Steinberger",
-    company: "Met Peter Steinberger ",
-    description:
-      "Met Peter, the creator of OpenClaw, during The Residency Vienna.",
     bullets: [
       "Met Peter, the creator of OpenClaw, during The Residency Vienna.",
     ],
     image: "/timeline/peter-steinberger.jpg",
+    imageSize: "sm",
     link: "https://www.linkedin.com/in/giangmichaeldao/",
     category: "sidequest",
   },
@@ -233,11 +205,8 @@ const rawMilestones: Milestone[] = [
     date: "Dec 2025",
     startDate: "2025-12",
     endDate: "2025-12",
-    title: "CodeCoogs President",
-    position: "President",
-    company: "Code[Coogs]",
-    description:
-      "Elected as President of CodeCoogs, leading Houston's largest developer communities @ 300 members",
+    title: "Code[Coogs]",
+    subtitle: "President",
     bullets: [
       "Coordinated with 40+ officers on 30+ Workshops and Social events, resulting in a 30% increase in member counts and 40% rise in retention",
       "Facilitated 3 projects and 10+ large-scale events, secured $5,000+ in annual sponsorship",
@@ -249,11 +218,8 @@ const rawMilestones: Milestone[] = [
     date: "May 2025",
     startDate: "2025-05",
     endDate: "2025-05",
-    title: "CodeCoogs VP of Operations",
-    position: "VP of Operations",
-    company: "Code[Coogs]",
-    description:
-      "Promoted to VP of Operations at CodeCoogs.",
+    title: "Code[Coogs]",
+    subtitle: "VP of Operations",
     bullets: [
       "Promoted to VP of Operations at CodeCoogs.",
     ],
@@ -263,10 +229,8 @@ const rawMilestones: Milestone[] = [
     date: "Mar 2025",
     startDate: "2025-03",
     endDate: "2025-03",
-    title: "Young AI Leader — AI for Good",
-    company: "AI for Good",
-    description:
-      "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
+    title: "AI for Good",
+    subtitle: "Young AI Leader",
     bullets: [
       "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
     ],
@@ -276,11 +240,8 @@ const rawMilestones: Milestone[] = [
     date: "Feb 2025",
     startDate: "2025-02",
     endDate: "2025-02",
-    title: "First CodeCoogs Talk",
-    position: "Collab Director",
-    company: "Code[Coogs]",
-    description:
-      "Gave my first talk as a CodeCoogs Collab Director, sharing knowledge and stepping into a leadership role in the developer community.",
+    title: "Code[Coogs]",
+    subtitle: "Collab Director",
     bullets: [
       "Gave my first talk as a CodeCoogs Collab Director, sharing knowledge and stepping into a leadership role in the developer community.",
     ],
@@ -292,11 +253,8 @@ const rawMilestones: Milestone[] = [
     date: "Jan 2025",
     startDate: "2025-01",
     endDate: "2025-01",
-    title: "Switched to CS & Joined CodeCoogs",
-    position: "Collaboration Director",
-    company: "Code[Coogs]",
-    description:
-      "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
+    title: "Code[Coogs]",
+    subtitle: "Collaboration Director",
     bullets: [
       "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
     ],
@@ -306,10 +264,8 @@ const rawMilestones: Milestone[] = [
     date: "Sep 2024",
     startDate: "2024-09",
     endDate: "2024-09",
-    title: "Founded Ping Pong @ UH",
-    company: "University of Houston",
-    description:
-      "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
+    title: "University of Houston",
+    subtitle: "Founded Ping Pong Club",
     bullets: [
       "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
     ],
@@ -319,10 +275,8 @@ const rawMilestones: Milestone[] = [
     date: "Apr 2024",
     startDate: "2024-04",
     endDate: "2024-04",
-    title: "AWS Certified Cloud Practitioner",
-    company: "Amazon Web Services",
-    description:
-      "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
+    title: "Amazon Web Services",
+    subtitle: "AWS Certified Cloud Practitioner",
     bullets: [
       "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
     ],
@@ -333,10 +287,8 @@ const rawMilestones: Milestone[] = [
     date: "Aug 2023",
     startDate: "2023-08",
     endDate: "2023-08",
-    title: "Joined University of Houston",
-    company: "University of Houston",
-    description:
-      "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
+    title: "University of Houston",
+    subtitle: "Joined University of Houston",
     bullets: [
       "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
     ],
@@ -639,10 +591,18 @@ export default function JourneyTimeline({ onSlideChange, onGoToSlide, light = fa
   );
 }
 
-function GitHubIcon() {
+export function GitHubIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style={{ width: "clamp(18px, 2.5vw, 24px)", height: "clamp(18px, 2.5vw, 24px)" }}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
       <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+    </svg>
+  );
+}
+
+export function LinkedInIcon({ className, style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
     </svg>
   );
 }
@@ -664,7 +624,7 @@ function SlideContent({
       {/* Header row: title left, date right */}
       <div className="flex items-start justify-between gap-4" style={{ marginBottom: "clamp(4px, 0.6vh, 8px)" }}>
         <div className="flex items-center gap-3 min-w-0">
-          <h2 className="font-bold leading-tight text-blue-400" style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
+          <h2 className="font-bold leading-tight text-gray-100" style={{ fontSize: "clamp(2.3rem, 4.4vw, 3.2rem)" }}>
             {nonGitHubLink ? (
               <a
                 href={nonGitHubLink}
@@ -687,7 +647,7 @@ function SlideContent({
               className={`shrink-0 transition-colors ${light ? "text-gray-400 hover:text-gray-600" : "text-gray-500 hover:text-gray-300"}`}
               onClick={(e) => e.stopPropagation()}
             >
-              <GitHubIcon />
+              <GitHubIcon style={{ width: "clamp(18px, 2.5vw, 24px)", height: "clamp(18px, 2.5vw, 24px)" }} />
             </a>
           )}
         </div>
@@ -696,10 +656,10 @@ function SlideContent({
         </span>
       </div>
 
-      {/* Position / Company subtitle */}
-      {(milestone.position || milestone.company) && (
-        <p className={`${light ? "text-gray-500" : "text-gray-500"}`} style={{ fontSize: "clamp(1.5rem, 2.4vw, 1.8rem)", marginBottom: "clamp(4px, 0.5vh, 6px)" }}>
-          {milestone.position}{milestone.position && milestone.company ? " · " : ""}{milestone.company}
+      {/* Subtitle */}
+      {milestone.subtitle && (
+        <p className="text-blue-400/80 italic" style={{ fontSize: "clamp(1.5rem, 2.4vw, 1.8rem)", marginBottom: "clamp(4px, 0.5vh, 6px)" }}>
+          {milestone.subtitle}
         </p>
       )}
 
@@ -715,14 +675,25 @@ function SlideContent({
         </div>
       )}
 
-      {/* Description — always visible */}
+      {/* Description — optional, always visible */}
       {milestone.description && (
         <p className={`leading-relaxed ${light ? "text-gray-600" : "text-gray-400"}`} style={{ fontSize: "clamp(1.8rem, 3vw, 2.2rem)", marginTop: "clamp(4px, 0.5vh, 8px)" }}>
           {milestone.description}
         </p>
       )}
 
-      {/* Bullets & image — only visible when focused */}
+      {/* Bullets — always visible */}
+      {milestone.bullets && milestone.bullets.length > 0 && (
+        <ul className={`space-y-1 leading-relaxed ${light ? "text-gray-600" : "text-gray-400"}`} style={{ fontSize: "clamp(1.5rem, 2.4vw, 1.8rem)", marginTop: "clamp(4px, 0.5vh, 8px)" }}>
+          {milestone.bullets.map((b, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="text-blue-400/60 mt-0.5 shrink-0">&#8226;</span>{b}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Images — only visible when focused */}
       <div
         className="overflow-hidden transition-all duration-500 ease-out"
         style={{
@@ -731,16 +702,6 @@ function SlideContent({
           marginTop: isFocused ? "8px" : "0px",
         }}
       >
-        {milestone.bullets && milestone.bullets.length > 0 && (
-          <ul className={`space-y-1 leading-relaxed ${light ? "text-gray-600" : "text-gray-400"}`} style={{ fontSize: "clamp(1.5rem, 2.4vw, 1.8rem)", marginBottom: "clamp(6px, 0.8vh, 10px)" }}>
-            {milestone.bullets.map((b, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="text-blue-400/60 mt-0.5 shrink-0">&#8226;</span>{b}
-              </li>
-            ))}
-          </ul>
-        )}
-
         {milestone.images ? (
           <div className="flex gap-2 flex-wrap">
             {milestone.images.map((img, i) => (
