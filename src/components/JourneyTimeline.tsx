@@ -7,7 +7,8 @@ export type MilestoneCategory = "work" | "research" | "hackathon" | "sidequest";
 
 export interface Milestone {
   date: string;
-  sortDate: string; // YYYY-MM for automatic chronological sorting (use YYYY-99 for "Present")
+  startDate: string; // YYYY-MM
+  endDate?: string; // YYYY-MM; omit for ongoing roles
   title: string;
   description: string;
   company?: string;
@@ -19,14 +20,21 @@ export interface Milestone {
   award?: string;
 }
 
-// Category display order — items within each category are auto-sorted by sortDate (latest first)
+// Category display order — items within each category are auto-sorted by date (latest first)
 const CATEGORY_ORDER: MilestoneCategory[] = ["work", "research", "hackathon", "sidequest"];
+
+function compareMilestones(a: Milestone, b: Milestone): number {
+  const aEnd = a.endDate ?? "9999-12";
+  const bEnd = b.endDate ?? "9999-12";
+  if (aEnd !== bEnd) return bEnd.localeCompare(aEnd);
+  return b.startDate.localeCompare(a.startDate);
+}
 
 const rawMilestones: Milestone[] = [
   // --- Work Experience ---
   {
     date: "April 2026 — Present",
-    sortDate: "2026-99",
+    startDate: "2026-04",
     title: "Chief AI Officer at GNL VINA",
     description:
       "Digitalized company operations, built GNL VINA's system with NextJS, TypeScript and Neon (Postgres) on Railway. Standardized 5+ processes and benchmarked manufacturing ability for production planning and resource allocation for a $4M PO.",
@@ -41,7 +49,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "August 2025 — April 2026",
-    sortDate: "2025-08",
+    startDate: "2025-08",
+    endDate: "2026-04",
     title: "Co-Founded Kier Therapeutics",
     description:
       "Accepted to The Residency (backed by Sam Altman) as one of 6 out of 600 startups. Built 4 versions of Nurtra with Flutter, SwiftUI, Firebase, Mixpanel & Superwall. Gathered feedback from 600+ users and managed a 70+ member community.",
@@ -59,7 +68,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "May 2025 — August 2025",
-    sortDate: "2025-05",
+    startDate: "2025-05",
+    endDate: "2025-08",
     title: "AI Engineer Intern at ETC Technology System",
     description:
       "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency. Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1, and Qwen3-8B. Built an Android app with Kotlin improving data acquisition speed by 40%.",
@@ -75,8 +85,9 @@ const rawMilestones: Milestone[] = [
   },
   // --- Research ---
   {
-    date: "September 2025 — Present",
-    sortDate: "2025-99",
+    date: "September 2025 — December 2025",
+    startDate: "2025-09",
+    endDate: "2025-12",
     title: "Biomedical Researcher — University of Houston",
     description:
       "Researched the DSPy framework and developed algorithms & models to improve cell tracking with 10+ biomedical datasets at UH's Cullen College of Engineering.",
@@ -88,8 +99,9 @@ const rawMilestones: Milestone[] = [
     category: "research",
   },
   {
-    date: "August 2025 — Present",
-    sortDate: "2025-98",
+    date: "August 2025 — December 2025",
+    startDate: "2025-08",
+    endDate: "2025-12",
     title: "AI Researcher — Rice University",
     description:
       "Joined the Computational Wellbeing Group at Rice ECE. Designed 50+ prompts to evaluate proprietary & open-source LLMs on psychotherapy safety for mental health applications.",
@@ -106,7 +118,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "May 2025",
-    sortDate: "2025-05",
+    startDate: "2025-05",
+    endDate: "2025-05",
     title: "AI Depression Research at HPE",
     description:
       "Presented original AI depression research at the HPE competition, exploring the intersection of AI and mental health.",
@@ -116,7 +129,8 @@ const rawMilestones: Milestone[] = [
   // --- Hackathon ---
   {
     date: "Mar 2025",
-    sortDate: "2025-03",
+    startDate: "2025-03",
+    endDate: "2025-03",
     title: "Harvard Rare Diseases Hackathon",
     description:
       "Received a scholarship to compete at the Harvard Rare Diseases Hackathon, applying AI to real-world healthcare challenges.",
@@ -126,7 +140,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Jan 2024",
-    sortDate: "2024-01",
+    startDate: "2024-01",
+    endDate: "2024-01",
     title: "Won 1st Place at TAMUHack",
     description:
       "Built a Chrome Extension to detect phishing emails and won 1st place at TAMUHack X.",
@@ -137,7 +152,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Jan 2024",
-    sortDate: "2024-01",
+    startDate: "2024-01",
+    endDate: "2024-01",
     title: "Rice Datathon",
     description:
       "Analyzed FDA data and identified alcohol consumption as the most detrimental contributor to long-term diseases and early death, providing actionable suggestions to reduce its impact.",
@@ -149,7 +165,8 @@ const rawMilestones: Milestone[] = [
   // --- Side-quest ---
   {
     date: "Feb 2026",
-    sortDate: "2026-02",
+    startDate: "2026-02",
+    endDate: "2026-02",
     title: "My Interview with Austria's National TV",
     description:
       "Featured on Austria's National TV, sharing our story and mission with Kier Therapeutics to a broader audience.",
@@ -158,7 +175,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Feb 2026",
-    sortDate: "2026-02",
+    startDate: "2026-02",
+    endDate: "2026-02",
     title: "AI in Healthcare Talk @ AI Tinkerers",
     description:
       "Gave a talk about our AI in Healthcare approach at AI Tinkerers, sharing insights from building Kier Therapeutics.",
@@ -168,7 +186,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Feb 2026",
-    sortDate: "2026-02",
+    startDate: "2026-02",
+    endDate: "2026-02",
     title: "Met Peter Steinberger in Vienna",
     description:
       "Traveled to Vienna and met Peter Steinberger, connecting with one of the most influential figures in mobile development.",
@@ -178,7 +197,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Dec 2025",
-    sortDate: "2025-12",
+    startDate: "2025-12",
+    endDate: "2025-12",
     title: "CodeCoogs President",
     description:
       "Elected as President of CodeCoogs, leading Houston's largest developer communities @ 300 members",
@@ -187,7 +207,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "May 2025",
-    sortDate: "2025-05",
+    startDate: "2025-05",
+    endDate: "2025-05",
     title: "CodeCoogs VP of Operations",
     description:
       "Promoted to VP of Operations at CodeCoogs.",
@@ -195,7 +216,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Mar 2025",
-    sortDate: "2025-03",
+    startDate: "2025-03",
+    endDate: "2025-03",
     title: "Young AI Leader — AI for Good",
     description:
       "Selected as a Young AI Leader for the AI for Good initiative, advocating for responsible and impactful AI development.",
@@ -203,7 +225,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Feb 2025",
-    sortDate: "2025-02",
+    startDate: "2025-02",
+    endDate: "2025-02",
     title: "First CodeCoogs Talk",
     description:
       "Gave my first talk as a CodeCoogs Collab Director, sharing knowledge and stepping into a leadership role in the developer community.",
@@ -213,7 +236,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Jan 2025",
-    sortDate: "2025-01",
+    startDate: "2025-01",
+    endDate: "2025-01",
     title: "Switched to CS & Joined CodeCoogs",
     description:
       "Officially switched my major to Computer Science and joined CodeCoogs as Collaboration Director, diving deeper into the tech community.",
@@ -221,7 +245,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Sep 2024",
-    sortDate: "2024-09",
+    startDate: "2024-09",
+    endDate: "2024-09",
     title: "Founded Ping Pong @ UH",
     description:
       "Founded the Ping Pong club at UH, bringing together students through friendly competition and community.",
@@ -229,7 +254,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Apr 2024",
-    sortDate: "2024-04",
+    startDate: "2024-04",
+    endDate: "2024-04",
     title: "AWS Certified Cloud Practitioner",
     description:
       "Earned the AWS Cloud Practitioner certification, building a strong foundation in cloud infrastructure and services.",
@@ -238,7 +264,8 @@ const rawMilestones: Milestone[] = [
   },
   {
     date: "Aug 2023",
-    sortDate: "2023-08",
+    startDate: "2023-08",
+    endDate: "2023-08",
     title: "Joined University of Houston",
     description:
       "Started my college journey at UH, eager to explore technology and find my path in software engineering.",
@@ -246,11 +273,11 @@ const rawMilestones: Milestone[] = [
   },
 ];
 
-// Auto-sort: group by category order, then sort within each category by sortDate descending
+// Auto-sort: group by category order, then sort within each category by date descending
 const milestones: Milestone[] = CATEGORY_ORDER.flatMap((cat) =>
   rawMilestones
     .filter((m) => m.category === cat)
-    .sort((a, b) => b.sortDate.localeCompare(a.sortDate))
+    .sort(compareMilestones)
 );
 
 export { milestones, CATEGORY_ORDER };

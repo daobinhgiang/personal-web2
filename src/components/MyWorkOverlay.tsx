@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
 import Image from "next/image";
-import { milestones, MilestoneCategory, Milestone } from "./JourneyTimeline";
+import { milestones, CATEGORY_ORDER, MilestoneCategory, Milestone } from "./JourneyTimeline";
 
 interface MyWorkOverlayProps {
   isOpen: boolean;
@@ -37,12 +37,14 @@ function getInsetFromRect(rect: DOMRect) {
 
 type Phase = "categories" | "loading" | "content";
 
-const categories: { key: MilestoneCategory; label: string; description: string }[] = [
-  { key: "work", label: "Work", description: "Professional experience & industry roles" },
-  { key: "research", label: "Research", description: "Certifications, publications & academic work" },
-  { key: "hackathon", label: "Hackathon", description: "Competitions, wins & rapid prototyping" },
-  { key: "sidequest", label: "Side-quest", description: "Organizations, clubs & community building" },
-];
+const categoryMeta: Record<MilestoneCategory, { label: string; description: string }> = {
+  work: { label: "Work", description: "Professional experience & industry roles" },
+  research: { label: "Research", description: "Certifications, publications & academic work" },
+  hackathon: { label: "Hackathon", description: "Competitions, wins & rapid prototyping" },
+  sidequest: { label: "Side-quest", description: "Organizations, clubs & community building" },
+};
+
+const categories = CATEGORY_ORDER.map((key) => ({ key, ...categoryMeta[key] }));
 
 function getMilestonesForCategory(cat: MilestoneCategory): Milestone[] {
   return milestones.filter((m) => m.category === cat);
@@ -325,7 +327,6 @@ export default function MyWorkOverlay({
   if (!isOpen) return null;
 
   const categoryMilestones = selectedCategory ? getMilestonesForCategory(selectedCategory) : [];
-  const categoryLabel = selectedCategory ? categories.find(c => c.key === selectedCategory)?.label : "";
 
   return (
     <>
