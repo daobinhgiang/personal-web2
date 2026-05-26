@@ -1,4 +1,5 @@
 import BackButton from "@/components/BackButton";
+import { milestones, type MilestoneCategory } from "@/data/milestones";
 
 interface ResumeCardProps {
   title: string;
@@ -30,101 +31,21 @@ function ResumeCard({ title, subtitle, date, bullets }: ResumeCardProps) {
   );
 }
 
-const experience = [
-  {
-    title: "Chief AI Officer",
-    subtitle: "GNL VINA., JSC",
-    date: "April 2026 — Present",
-    bullets: [
-      "Digitalized company operations, built GNL VINA's System with NextJS, TypeScript and Neon (Postgres); Railway hosting",
-      "Standardized 5+ processes and benchmarked manufacturing ability at each step, estimating manufacturing outputs for production planning and resource allocation for a $4M PO",
-    ],
-  },
-  {
-    title: "Co-Founder",
-    subtitle: "Kier Therapeutics, Inc.",
-    date: "August 2025 — April 2026",
-    bullets: [
-      "Accepted to The Residency (backed by Sam Altman — CEO of OpenAI) as one of 6 out of 600 startups",
-      "Built product and gathered feedback, built 4 versions of Nurtra with Flutter & SwiftUI, Firebase, Mixpanel and Superwall",
-      "Grew to 600+ users, managed 70+ members community; achieved 200k+ views/300+ followers across all platforms",
-      "Invited to speak at AI Tinkerers and Austria's National TV about Kier's mission",
-      "Mentored by clinical advisors from Stanford & The Alliance for Eating Disorders",
-    ],
-  },
-  {
-    title: "AI Engineer Intern",
-    subtitle: "ETC Technology System., JSC",
-    date: "May 2025 — August 2025",
-    bullets: [
-      "Developed a face tracking/recognition system for 25,000+ employees using YOLOv11 and Kalman filter, achieved 92% accuracy with 350ms latency; deployed with Docker, Triton serving and JMeter stress testing",
-      "Built a RAG pipeline with Pinecone, MedEmbed-large-v0.1 for embeddings, and Qwen3-8B for medical questions",
-      "Built an Android app with Kotlin for collecting edge case data, improving acquisition speed by 40% with 99% accuracy",
-    ],
-  },
-];
+function getCards(category: MilestoneCategory) {
+  return milestones
+    .filter((m) => m.category === category)
+    .map((m) => ({
+      title: m.subtitle || m.title,
+      subtitle: m.subtitle ? m.title : "",
+      date: m.date,
+      bullets: m.bullets ?? [],
+    }));
+}
 
-const research = [
-  {
-    title: "Biomedical Researcher",
-    subtitle: "Cullen College of Engineering | University of Houston",
-    date: "September 2025 — December 2025",
-    bullets: [
-      "Researched DSPy framework & developed algorithms & models to improve cell tracking with 10+ biomedical datasets",
-    ],
-  },
-  {
-    title: "AI Researcher — Computational Wellbeing Group",
-    subtitle: "Rice University",
-    date: "August 2025 — December 2025",
-    bullets: [
-      "Awarded Best Presentation at the Ken Kennedy Institute's AI in Health Conference",
-      "Designed 50+ prompts to evaluate various proprietary & open-source LLMs on psychotherapy safety for mental health applications",
-    ],
-  },
-];
-
-const projects = [
-  {
-    title: "Harvard Rare Diseases Hackathon",
-    subtitle: "Software Engineer | Flask, Python, Google AI Studio",
-    date: "March 2025",
-    bullets: [
-      "Created a Flask app that monitors rare disease patients' health and provides personalized support for nutritional analysis",
-      "Constructed 6+ functions, including voice interaction using Google Speech Recognition, achieving wake-word detection with a 25% improvement in navigation speed, rare disease search, and tracking of 50+ distinct nutrients",
-      "Received scholarship from Harvard that covered travel and living expenses for the 2-day hackathon",
-    ],
-  },
-  {
-    title: "TAMUhack X — 1st Place Winner",
-    subtitle: "Front-end Engineer | HTML/CSS, JavaScript",
-    date: "January 2024",
-    bullets: [
-      "Engineered a Chrome Extension with SafeBrowsing API to detect phishing links with 95% accuracy; won 1st place",
-    ],
-  },
-  {
-    title: "Rice Datathon 2024 — Best Visiting Team",
-    subtitle: "Data Scientist | Python, Excel",
-    date: "January 2024",
-    bullets: [
-      'Competed in a team of 2 against over 550+ students across Houston, received recognition as "The Best Visiting Team"',
-      "Processed a dataset of 100,000+ examples, removed 5,000+ outliers to weight different harmful substances",
-    ],
-  },
-];
-
-const leadership = [
-  {
-    title: "President",
-    subtitle: "Code[Coogs]",
-    date: "December 2025 — Present",
-    bullets: [
-      "Coordinated with 40+ officers on 30+ Workshops and Social events to promote culture and engagement within the CS community, resulting in a 30% increase in member counts and a 40% rise in member retention",
-      "Facilitated 3 projects and 10+ large-scale events such as Professional Development workshops, Hackathon, and Team Projects with Fortune 500 Companies, secured $5,000+ in annual sponsorship for club's operation",
-    ],
-  },
-];
+const experience = getCards("work");
+const research = getCards("research");
+const projects = getCards("hackathon");
+const sidequest = getCards("sidequest");
 
 const certifications = [
   "AWS Certified Cloud Practitioner (May 2024)",
@@ -255,7 +176,7 @@ export default function Resume() {
       <section className="mb-14 fade-in-up" style={{ animationDelay: "0.4s" }}>
         <h2 className="text-sm font-semibold uppercase tracking-widest text-blue-400 mb-6">Leadership</h2>
         <div className="space-y-6">
-          {leadership.map((card, i) => (
+          {sidequest.map((card, i) => (
             <ResumeCard key={i} {...card} />
           ))}
         </div>

@@ -103,7 +103,7 @@ export default function MyWorkOverlay({
   const [hoveredCategory, setHoveredCategory] = useState<MilestoneCategory | null>(null);
   const mousePos = useRef<{ x: number; y: number } | null>(null);
 
-  // Reset state when overlay closes
+  // Reset state when overlay closes; ensure scroll is always restored on unmount
   useEffect(() => {
     if (!isOpen) {
       setPhase("categories");
@@ -112,6 +112,9 @@ export default function MyWorkOverlay({
       targetX.current = 0;
       currentX.current = 0;
     }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [isOpen]);
 
   // Category card scroll: measure container
@@ -602,8 +605,8 @@ export default function MyWorkOverlay({
                   )}
                   {milestone.images ? (
                     <div className="mt-4 grid grid-cols-2 gap-2 w-full">
-                      {milestone.images.map((img, i) => (
-                        <img key={i} src={img} alt={`${milestone.title} ${i + 1}`} className="rounded-lg shadow-lg w-full h-auto object-cover aspect-[16/10]" />
+                      {milestone.images.map((img, imgIdx) => (
+                        <img key={imgIdx} src={img} alt={`${milestone.title} ${imgIdx + 1}`} className="rounded-lg shadow-lg w-full h-auto object-cover aspect-[16/10]" />
                       ))}
                     </div>
                   ) : milestone.image ? (

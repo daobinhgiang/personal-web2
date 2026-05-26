@@ -5,7 +5,7 @@ import "./globals.css";
 import CustomCursor from "@/components/CustomCursor";
 
 export const metadata: Metadata = {
-  title: "Giang Dao - Personal Website",
+  title: "Michael Dao - Personal Website",
   description: "A personal website and blog",
 };
 

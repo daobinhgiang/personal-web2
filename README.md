@@ -1,4 +1,4 @@
-# Giang Dao - Personal Website
+# Michael Dao - Personal Website
 
 A personal portfolio website built with Next.js, TypeScript, Tailwind CSS, and GSAP.
 

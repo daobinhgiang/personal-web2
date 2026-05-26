@@ -9,6 +9,9 @@ export default function CustomCursor() {
   const isInteractive = useRef(false);
 
   useEffect(() => {
+    // Only show custom cursor on devices with a fine pointer (mouse/trackpad)
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
     const cursor = cursorRef.current!;
     const ripple = rippleRef.current!;
     document.body.style.cursor = "none";
@@ -71,12 +74,16 @@ export default function CustomCursor() {
 
     let interactives = addInteractiveListeners();
 
+    let debounceTimer: ReturnType<typeof setTimeout>;
     const observer = new MutationObserver(() => {
-      interactives.forEach((el) => {
-        el.removeEventListener("mouseenter", handleEnterInteractive);
-        el.removeEventListener("mouseleave", handleLeaveInteractive);
-      });
-      interactives = addInteractiveListeners();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        interactives.forEach((el) => {
+          el.removeEventListener("mouseenter", handleEnterInteractive);
+          el.removeEventListener("mouseleave", handleLeaveInteractive);
+        });
+        interactives = addInteractiveListeners();
+      }, 100);
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -90,6 +97,7 @@ export default function CustomCursor() {
         el.removeEventListener("mouseenter", handleEnterInteractive);
         el.removeEventListener("mouseleave", handleLeaveInteractive);
       });
+      clearTimeout(debounceTimer);
       observer.disconnect();
     };
   }, []);
