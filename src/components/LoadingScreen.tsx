@@ -83,7 +83,7 @@ export default function LoadingScreen() {
 
   if (done) return null;
 
-  const name = "Giang Dao";
+  const name = "Michael Dao";
 
   return (
     <div ref={overlayRef} className="loading-overlay fixed inset-0 z-[100] pointer-events-none">

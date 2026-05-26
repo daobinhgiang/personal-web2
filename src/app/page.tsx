@@ -25,7 +25,7 @@ export default function Home() {
         <div>
           <div className="mb-[5vw] fade-in-up" style={{ animationDelay: "0.1s" }}>
             <h1 className="text-[clamp(2.5rem,6.5vw,6rem)] font-bold text-balance leading-[1.1]">
-              Giang Dao
+              Michael Dao
             </h1>
             <p className="text-[clamp(1.1rem,2vw,2rem)] text-gray-400 mt-[0.8vw]">
               AI Engineer & Technologist
@@ -95,7 +95,7 @@ export default function Home() {
         </div>
         <Image
           src="/profile.jpg"
-          alt="Giang Dao"
+          alt="Michael Dao"
           width={200}
           height={200}
           className="rounded-3xl object-cover w-[clamp(100px,16vw,240px)] h-[clamp(100px,16vw,240px)] flex-shrink-0 fade-in-up"
